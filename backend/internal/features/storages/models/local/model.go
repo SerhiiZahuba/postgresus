@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"postgresus-backend/internal/config"
-	files_utils "postgresus-backend/internal/util/files"
 
 	"github.com/google/uuid"
 )
@@ -134,14 +133,6 @@ func (l *LocalStorage) Validate() error {
 }
 
 func (l *LocalStorage) TestConnection() error {
-	err := files_utils.EnsureDirectories([]string{
-		config.GetEnv().TempFolder,
-		config.GetEnv().DataFolder,
-	})
-	if err != nil {
-		return fmt.Errorf("failed to ensure directories: %w", err)
-	}
-
 	testFile := filepath.Join(config.GetEnv().TempFolder, "test_connection")
 	f, err := os.Create(testFile)
 	if err != nil {
