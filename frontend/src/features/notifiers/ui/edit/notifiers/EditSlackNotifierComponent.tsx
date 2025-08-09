@@ -11,7 +11,7 @@ interface Props {
 export function EditSlackNotifierComponent({ notifier, setNotifier, setIsUnsaved }: Props) {
   return (
     <>
-      <div className="mb-1 ml-[110px] max-w-[200px]" style={{ lineHeight: 1 }}>
+      <div className="mb-1 ml-[130px] max-w-[200px]" style={{ lineHeight: 1 }}>
         <a
           className="text-xs !text-blue-600"
           href="https://postgresus.com/notifier-slack"
@@ -23,7 +23,7 @@ export function EditSlackNotifierComponent({ notifier, setNotifier, setIsUnsaved
       </div>
 
       <div className="mb-1 flex items-center">
-        <div className="min-w-[110px]">Bot token</div>
+        <div className="w-[130px] min-w-[130px]">Bot token</div>
 
         <div className="w-[250px]">
           <Input
@@ -48,7 +48,7 @@ export function EditSlackNotifierComponent({ notifier, setNotifier, setIsUnsaved
       </div>
 
       <div className="mb-1 flex items-center">
-        <div className="min-w-[110px]">Target chat ID</div>
+        <div className="w-[130px] min-w-[130px]">Target chat ID</div>
 
         <div className="w-[250px]">
           <Input

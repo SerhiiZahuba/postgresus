@@ -14,7 +14,7 @@ export function EditWebhookNotifierComponent({ notifier, setNotifier, setIsUnsav
   return (
     <>
       <div className="flex items-center">
-        <div className="min-w-[110px]">Webhook URL</div>
+        <div className="w-[130px] min-w-[130px]">Webhook URL</div>
 
         <div className="w-[250px]">
           <Input
@@ -37,7 +37,7 @@ export function EditWebhookNotifierComponent({ notifier, setNotifier, setIsUnsav
       </div>
 
       <div className="mt-1 flex items-center">
-        <div className="min-w-[110px]">Method</div>
+        <div className="w-[130px] min-w-[130px]">Method</div>
 
         <div className="w-[250px]">
           <Select

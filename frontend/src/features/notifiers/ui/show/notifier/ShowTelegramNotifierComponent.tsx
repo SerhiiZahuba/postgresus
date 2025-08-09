@@ -17,6 +17,13 @@ export function ShowTelegramNotifierComponent({ notifier }: Props) {
         <div className="min-w-[110px]">Target chat ID</div>
         {notifier?.telegramNotifier?.targetChatId}
       </div>
+
+      {notifier?.telegramNotifier?.threadId && (
+        <div className="mb-1 flex items-center">
+          <div className="min-w-[110px]">Topic ID</div>
+          {notifier.telegramNotifier.threadId}
+        </div>
+      )}
     </>
   );
 }

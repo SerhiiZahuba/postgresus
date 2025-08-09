@@ -12,7 +12,7 @@ export function EditDiscordNotifierComponent({ notifier, setNotifier, setIsUnsav
   return (
     <>
       <div className="flex">
-        <div className="max-w-[110px] min-w-[110px] pr-3">Channel webhook URL</div>
+        <div className="w-[130px] max-w-[130px] min-w-[130px] pr-3">Channel webhook URL</div>
 
         <div className="w-[250px]">
           <Input
@@ -35,7 +35,7 @@ export function EditDiscordNotifierComponent({ notifier, setNotifier, setIsUnsav
         </div>
       </div>
 
-      <div className="ml-[110px] max-w-[250px]">
+      <div className="ml-[130px] max-w-[250px]">
         <div className="mt-1 text-xs text-gray-500">
           <strong>How to get Discord webhook URL:</strong>
           <br />

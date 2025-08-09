@@ -13,7 +13,7 @@ export function EditEmailNotifierComponent({ notifier, setNotifier, setIsUnsaved
   return (
     <>
       <div className="mb-1 flex items-center">
-        <div className="min-w-[110px]">Target email</div>
+        <div className="w-[130px] min-w-[130px]">Target email</div>
         <Input
           value={notifier?.emailNotifier?.targetEmail || ''}
           onChange={(e) => {
@@ -39,7 +39,7 @@ export function EditEmailNotifierComponent({ notifier, setNotifier, setIsUnsaved
       </div>
 
       <div className="mb-1 flex items-center">
-        <div className="min-w-[110px]">SMTP host</div>
+        <div className="w-[130px] min-w-[130px]">SMTP host</div>
         <Input
           value={notifier?.emailNotifier?.smtpHost || ''}
           onChange={(e) => {
@@ -61,7 +61,7 @@ export function EditEmailNotifierComponent({ notifier, setNotifier, setIsUnsaved
       </div>
 
       <div className="mb-1 flex items-center">
-        <div className="min-w-[110px]">SMTP port</div>
+        <div className="w-[130px] min-w-[130px]">SMTP port</div>
         <Input
           type="number"
           value={notifier?.emailNotifier?.smtpPort || ''}
@@ -84,7 +84,7 @@ export function EditEmailNotifierComponent({ notifier, setNotifier, setIsUnsaved
       </div>
 
       <div className="mb-1 flex items-center">
-        <div className="min-w-[110px]">SMTP user</div>
+        <div className="w-[130px] min-w-[130px]">SMTP user</div>
         <Input
           value={notifier?.emailNotifier?.smtpUser || ''}
           onChange={(e) => {
@@ -106,7 +106,7 @@ export function EditEmailNotifierComponent({ notifier, setNotifier, setIsUnsaved
       </div>
 
       <div className="mb-1 flex items-center">
-        <div className="min-w-[110px]">SMTP password</div>
+        <div className="w-[130px] min-w-[130px]">SMTP password</div>
         <Input
           value={notifier?.emailNotifier?.smtpPassword || ''}
           onChange={(e) => {

@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
@@ -16,6 +17,7 @@ type TelegramNotifier struct {
 	NotifierID   uuid.UUID `json:"notifierId"   gorm:"primaryKey;column:notifier_id"`
 	BotToken     string    `json:"botToken"     gorm:"not null;column:bot_token"`
 	TargetChatID string    `json:"targetChatId" gorm:"not null;column:target_chat_id"`
+	ThreadID     *int64    `json:"threadId"     gorm:"column:thread_id"`
 }
 
 func (t *TelegramNotifier) TableName() string {
@@ -46,6 +48,10 @@ func (t *TelegramNotifier) Send(logger *slog.Logger, heading string, message str
 	data.Set("chat_id", t.TargetChatID)
 	data.Set("text", fullMessage)
 	data.Set("parse_mode", "HTML")
+
+	if t.ThreadID != nil && *t.ThreadID != 0 {
+		data.Set("message_thread_id", strconv.FormatInt(*t.ThreadID, 10))
+	}
 
 	req, err := http.NewRequest("POST", apiURL, strings.NewReader(data.Encode()))
 	if err != nil {
