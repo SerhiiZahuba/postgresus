@@ -3,6 +3,10 @@ FROM --platform=$BUILDPLATFORM node:24-alpine AS frontend-build
 
 WORKDIR /frontend
 
+# Add version for the frontend build
+ARG APP_VERSION=dev
+ENV VITE_APP_VERSION=$APP_VERSION
+
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 COPY frontend/ ./
@@ -52,6 +56,11 @@ RUN CGO_ENABLED=0 \
 
 # ========= RUNTIME =========
 FROM --platform=$TARGETPLATFORM debian:bookworm-slim
+
+# Add version metadata to runtime image
+ARG APP_VERSION=dev
+LABEL org.opencontainers.image.version=$APP_VERSION
+ENV APP_VERSION=$APP_VERSION
 
 # Install PostgreSQL server and client tools (versions 13-17)
 RUN apt-get update && apt-get install -y --no-install-recommends \

@@ -12,3 +12,5 @@ export function getApplicationServer() {
 }
 
 export const GOOGLE_DRIVE_OAUTH_REDIRECT_URL = 'https://postgresus.com/storages/google-oauth';
+
+export const APP_VERSION = (import.meta.env.VITE_APP_VERSION as string) || 'dev';

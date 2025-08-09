@@ -2,7 +2,7 @@ import { Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import GitHubButton from 'react-github-btn';
 
-import { getApplicationServer } from '../../constants';
+import { APP_VERSION, getApplicationServer } from '../../constants';
 import { type DiskUsage, diskApi } from '../../entity/disk';
 import { DatabasesComponent } from '../../features/databases/ui/DatabasesComponent';
 import { NotifiersComponent } from '../../features/notifiers/ui/NotifiersComponent';
@@ -101,7 +101,7 @@ export const MainScreenComponent = () => {
       </div>
       {/* ===================== END NAVBAR ===================== */}
 
-      <div className="flex">
+      <div className="relative flex">
         <div
           className="max-w-[60px] min-w-[60px] rounded bg-white py-2 shadow"
           style={{ height: contentHeight }}
@@ -152,6 +152,10 @@ export const MainScreenComponent = () => {
         {selectedTab === 'notifiers' && <NotifiersComponent contentHeight={contentHeight} />}
         {selectedTab === 'storages' && <StoragesComponent contentHeight={contentHeight} />}
         {selectedTab === 'databases' && <DatabasesComponent contentHeight={contentHeight} />}
+
+        <div className="absolute bottom-1 left-1 mb-[0px] text-sm text-gray-400">
+          v{APP_VERSION}
+        </div>
       </div>
     </div>
   );

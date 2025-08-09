@@ -51,10 +51,15 @@ func main() {
 	runMigrations(log)
 
 	// create directories that used for backups and restore
-	files_utils.EnsureDirectories([]string{
+	err := files_utils.EnsureDirectories([]string{
 		config.GetEnv().TempFolder,
 		config.GetEnv().DataFolder,
 	})
+
+	if err != nil {
+		log.Error("Failed to ensure directories", "error", err)
+		os.Exit(1)
+	}
 
 	// Handle password reset if flag is provided
 	newPassword := flag.String("new-password", "", "Set a new password for the user")

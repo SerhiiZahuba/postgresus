@@ -301,6 +301,8 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
+          build-args: |
+            APP_VERSION=dev-${{ github.sha }}
           tags: |
             rostislavdugin/postgresus:latest
             rostislavdugin/postgresus:${{ github.sha }}
@@ -333,6 +335,8 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
+          build-args: |
+            APP_VERSION=${{ needs.determine-version.outputs.new_version }}
           tags: |
             rostislavdugin/postgresus:latest
             rostislavdugin/postgresus:v${{ needs.determine-version.outputs.new_version }}
