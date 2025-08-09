@@ -37,12 +37,15 @@ export const EditDatabaseBaseInfoComponent = ({
     if (!editingDatabase) return;
     if (isSaveToApi) {
       setIsSaving(true);
+
       try {
+        editingDatabase.name = editingDatabase.name?.trim();
         await databaseApi.updateDatabase(editingDatabase);
         setIsUnsaved(false);
       } catch (e) {
         alert((e as Error).message);
       }
+
       setIsSaving(false);
     }
     onSaved(editingDatabase);
@@ -57,7 +60,7 @@ export const EditDatabaseBaseInfoComponent = ({
   if (!editingDatabase) return null;
 
   // mandatory-field check
-  const isAllFieldsFilled = Boolean(editingDatabase.name);
+  const isAllFieldsFilled = !!editingDatabase.name?.trim();
 
   return (
     <div>
@@ -86,7 +89,7 @@ export const EditDatabaseBaseInfoComponent = ({
           className={`${isShowCancelButton ? 'ml-1' : 'ml-auto'} mr-5`}
           onClick={saveDatabase}
           loading={isSaving}
-          disabled={!isUnsaved || !isAllFieldsFilled}
+          disabled={(isSaveToApi && !isUnsaved) || !isAllFieldsFilled}
         >
           {saveButtonText || 'Save'}
         </Button>
