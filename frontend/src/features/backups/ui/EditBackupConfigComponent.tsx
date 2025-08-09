@@ -74,6 +74,7 @@ export const EditBackupConfigComponent = ({
   const [isShowCreateStorage, setShowCreateStorage] = useState(false);
 
   const [isShowWarn, setIsShowWarn] = useState(false);
+  const [isShowBackupDisableConfirm, setIsShowBackupDisableConfirm] = useState(false);
 
   const timeFormat = useMemo(() => {
     const is12 = getUserTimeFormat();
@@ -206,7 +207,14 @@ export const EditBackupConfigComponent = ({
         <div className="min-w-[150px]">Backups enabled</div>
         <Switch
           checked={backupConfig.isBackupsEnabled}
-          onChange={(checked) => updateBackupConfig({ isBackupsEnabled: checked })}
+          onChange={(checked) => {
+            // If disabling backups on existing database, show confirmation
+            if (!checked && database.id && backupConfig.isBackupsEnabled) {
+              setIsShowBackupDisableConfirm(true);
+            } else {
+              updateBackupConfig({ isBackupsEnabled: checked });
+            }
+          }}
           size="small"
         />
       </div>
@@ -515,6 +523,22 @@ export const EditBackupConfigComponent = ({
           actionText="I understand"
           cancelText="Cancel"
           hideCancelButton
+        />
+      )}
+
+      {isShowBackupDisableConfirm && (
+        <ConfirmationComponent
+          onConfirm={() => {
+            updateBackupConfig({ isBackupsEnabled: false });
+            setIsShowBackupDisableConfirm(false);
+          }}
+          onDecline={() => {
+            setIsShowBackupDisableConfirm(false);
+          }}
+          description="All current backups will be removed? Are you sure?"
+          actionButtonColor="red"
+          actionText="Yes, disable backing up and remove all existing backup files"
+          cancelText="Cancel"
         />
       )}
     </div>
