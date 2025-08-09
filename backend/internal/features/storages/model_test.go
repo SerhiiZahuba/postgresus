@@ -12,7 +12,6 @@ import (
 	local_storage "postgresus-backend/internal/features/storages/models/local"
 	nas_storage "postgresus-backend/internal/features/storages/models/nas"
 	s3_storage "postgresus-backend/internal/features/storages/models/s3"
-	files_utils "postgresus-backend/internal/util/files"
 	"postgresus-backend/internal/util/logger"
 	"strconv"
 	"testing"
@@ -37,13 +36,6 @@ func Test_Storage_BasicOperations(t *testing.T) {
 	ctx := context.Background()
 
 	validateEnvVariables(t)
-
-	// create directories that used for backups and restore
-	err := files_utils.EnsureDirectories([]string{
-		config.GetEnv().TempFolder,
-		config.GetEnv().DataFolder,
-	})
-	require.NoError(t, err, "Failed to ensure directories")
 
 	// Setup S3 connection to docker-compose MinIO
 	s3Container, err := setupS3Container(ctx)
