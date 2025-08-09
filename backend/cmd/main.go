@@ -50,6 +50,12 @@ func main() {
 
 	runMigrations(log)
 
+	// create directories that used for backups and restore
+	files_utils.EnsureDirectories([]string{
+		config.GetEnv().TempFolder,
+		config.GetEnv().DataFolder,
+	})
+
 	// Handle password reset if flag is provided
 	newPassword := flag.String("new-password", "", "Set a new password for the user")
 	flag.Parse()

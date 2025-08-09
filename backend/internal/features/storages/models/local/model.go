@@ -25,11 +25,6 @@ func (l *LocalStorage) TableName() string {
 func (l *LocalStorage) SaveFile(logger *slog.Logger, fileID uuid.UUID, file io.Reader) error {
 	logger.Info("Starting to save file to local storage", "fileId", fileID.String())
 
-	if err := l.ensureDirectories(); err != nil {
-		logger.Error("Failed to ensure directories", "fileId", fileID.String(), "error", err)
-		return err
-	}
-
 	tempFilePath := filepath.Join(config.GetEnv().TempFolder, fileID.String())
 	logger.Debug("Creating temp file", "fileId", fileID.String(), "tempPath", tempFilePath)
 
@@ -134,14 +129,11 @@ func (l *LocalStorage) DeleteFile(fileID uuid.UUID) error {
 }
 
 func (l *LocalStorage) Validate() error {
-	return l.ensureDirectories()
+	// nothing to validate
+	return nil
 }
 
 func (l *LocalStorage) TestConnection() error {
-	if err := l.ensureDirectories(); err != nil {
-		return err
-	}
-
 	testFile := filepath.Join(config.GetEnv().TempFolder, "test_connection")
 	f, err := os.Create(testFile)
 	if err != nil {
@@ -153,22 +145,6 @@ func (l *LocalStorage) TestConnection() error {
 
 	if err = os.Remove(testFile); err != nil {
 		return fmt.Errorf("failed to remove test file: %w", err)
-	}
-
-	return nil
-}
-
-func (l *LocalStorage) ensureDirectories() error {
-	// Standard permissions for directories: owner
-	// can read/write/execute, others can read/execute
-	const directoryPermissions = 0755
-
-	if err := os.MkdirAll(config.GetEnv().DataFolder, directoryPermissions); err != nil {
-		return fmt.Errorf("failed to create backups directory: %w", err)
-	}
-
-	if err := os.MkdirAll(config.GetEnv().TempFolder, directoryPermissions); err != nil {
-		return fmt.Errorf("failed to create temp directory: %w", err)
 	}
 
 	return nil
