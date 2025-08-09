@@ -56,7 +56,8 @@ func (s *BackupConfigService) SaveBackupConfig(
 	if existingConfig != nil {
 		// If storage is changing, notify the listener
 		if s.dbStorageChangeListener != nil &&
-			!storageIDsEqual(existingConfig.StorageID, backupConfig.StorageID) {
+			backupConfig.Storage != nil &&
+			!storageIDsEqual(existingConfig.StorageID, &backupConfig.Storage.ID) {
 			if err := s.dbStorageChangeListener.OnBeforeBackupsStorageChange(
 				backupConfig.DatabaseID,
 			); err != nil {
