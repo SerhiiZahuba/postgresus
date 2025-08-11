@@ -12,16 +12,6 @@ interface Props {
 export function EditNASStorageComponent({ storage, setStorage, setIsUnsaved }: Props) {
   return (
     <>
-      <div className="mb-2 flex items-center">
-        <div className="min-w-[110px]" />
-
-        <div className="text-xs text-blue-600">
-          <a href="https://postgresus.com/nas-storage" target="_blank" rel="noreferrer">
-            How to connect NAS storage?
-          </a>
-        </div>
-      </div>
-
       <div className="mb-1 flex items-center">
         <div className="min-w-[110px]">Host</div>
         <Input
@@ -47,7 +37,7 @@ export function EditNASStorageComponent({ storage, setStorage, setIsUnsaved }: P
       <div className="mb-1 flex items-center">
         <div className="min-w-[110px]">Port</div>
         <InputNumber
-          value={storage?.nasStorage?.port || 445}
+          value={storage?.nasStorage?.port}
           onChange={(value) => {
             if (!storage?.nasStorage || !value) return;
 

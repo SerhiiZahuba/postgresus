@@ -102,7 +102,7 @@ export function EditStorageComponent({
     if (type === StorageType.NAS) {
       storage.nasStorage = {
         host: '',
-        port: 0,
+        port: 445,
         share: '',
         username: '',
         password: '',
@@ -138,9 +138,13 @@ export function EditStorageComponent({
   }, [editingStorage]);
 
   const isAllDataFilled = () => {
-    if (!storage) return false;
+    if (!storage) {
+      return false;
+    }
 
-    if (!storage.name) return false;
+    if (!storage.name) {
+      return false;
+    }
 
     if (storage.type === StorageType.LOCAL) {
       return true; // No additional settings required for local storage
