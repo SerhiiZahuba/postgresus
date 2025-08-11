@@ -20,6 +20,7 @@ import (
 	pgtypes "postgresus-backend/internal/features/databases/databases/postgresql"
 	"postgresus-backend/internal/features/restores/models"
 	"postgresus-backend/internal/features/storages"
+	files_utils "postgresus-backend/internal/util/files"
 	"postgresus-backend/internal/util/tools"
 
 	"github.com/google/uuid"
@@ -172,6 +173,13 @@ func (uc *RestorePostgresqlBackupUsecase) downloadBackupToTempFile(
 	backup *backups.Backup,
 	storage *storages.Storage,
 ) (string, func(), error) {
+	err := files_utils.EnsureDirectories([]string{
+		config.GetEnv().TempFolder,
+	})
+	if err != nil {
+		return "", nil, fmt.Errorf("failed to ensure directories: %w", err)
+	}
+
 	// Create temporary directory for backup data
 	tempDir, err := os.MkdirTemp(config.GetEnv().TempFolder, "restore_"+uuid.New().String())
 	if err != nil {

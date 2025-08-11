@@ -6,13 +6,15 @@ import (
 )
 
 func EnsureDirectories(directories []string) error {
-	// Standard permissions for directories: owner
-	// can read/write/execute, others can read/execute
 	const directoryPermissions = 0755
 
 	for _, directory := range directories {
-		if err := os.MkdirAll(directory, directoryPermissions); err != nil {
-			return fmt.Errorf("failed to create directory %s: %w", directory, err)
+		if _, err := os.Stat(directory); os.IsNotExist(err) {
+			if err := os.MkdirAll(directory, directoryPermissions); err != nil {
+				return fmt.Errorf("failed to create directory %s: %w", directory, err)
+			}
+		} else if err != nil {
+			return fmt.Errorf("failed to check directory %s: %w", directory, err)
 		}
 	}
 

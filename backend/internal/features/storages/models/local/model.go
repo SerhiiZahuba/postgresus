@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"postgresus-backend/internal/config"
+	files_utils "postgresus-backend/internal/util/files"
 
 	"github.com/google/uuid"
 )
@@ -24,6 +25,13 @@ func (l *LocalStorage) TableName() string {
 
 func (l *LocalStorage) SaveFile(logger *slog.Logger, fileID uuid.UUID, file io.Reader) error {
 	logger.Info("Starting to save file to local storage", "fileId", fileID.String())
+
+	err := files_utils.EnsureDirectories([]string{
+		config.GetEnv().TempFolder,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to ensure directories: %w", err)
+	}
 
 	tempFilePath := filepath.Join(config.GetEnv().TempFolder, fileID.String())
 	logger.Debug("Creating temp file", "fileId", fileID.String(), "tempPath", tempFilePath)

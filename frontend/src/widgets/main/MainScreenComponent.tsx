@@ -153,7 +153,7 @@ export const MainScreenComponent = () => {
         {selectedTab === 'storages' && <StoragesComponent contentHeight={contentHeight} />}
         {selectedTab === 'databases' && <DatabasesComponent contentHeight={contentHeight} />}
 
-        <div className="absolute bottom-1 left-1 mb-[0px] text-sm text-gray-400">
+        <div className="absolute bottom-1 left-2 mb-[0px] text-sm text-gray-400">
           v{APP_VERSION}
         </div>
       </div>
