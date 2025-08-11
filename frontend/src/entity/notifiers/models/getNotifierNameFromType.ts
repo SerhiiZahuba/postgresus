@@ -10,6 +10,8 @@ export const getNotifierNameFromType = (type: NotifierType) => {
       return 'Webhook';
     case NotifierType.SLACK:
       return 'Slack';
+    case NotifierType.DISCORD:
+      return 'Discord';
     default:
       return '';
   }
