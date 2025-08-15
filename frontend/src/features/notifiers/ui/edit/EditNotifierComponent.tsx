@@ -192,7 +192,7 @@ export function EditNotifierComponent({
     <div>
       {isShowName && (
         <div className="mb-1 flex items-center">
-          <div className="min-w-[110px]">Name</div>
+          <div className="min-w-[130px]">Name</div>
 
           <Input
             value={notifier?.name || ''}
