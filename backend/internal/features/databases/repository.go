@@ -1,6 +1,7 @@
 package databases
 
 import (
+	"errors"
 	"postgresus-backend/internal/features/databases/databases/postgresql"
 	"postgresus-backend/internal/storage"
 
@@ -21,9 +22,12 @@ func (r *DatabaseRepository) Save(database *Database) (*Database, error) {
 	err := db.Transaction(func(tx *gorm.DB) error {
 		switch database.Type {
 		case DatabaseTypePostgres:
-			if database.Postgresql != nil {
-				database.Postgresql.DatabaseID = &database.ID
+			if database.Postgresql == nil {
+				return errors.New("postgresql configuration is required for PostgreSQL database")
 			}
+
+			// Ensure DatabaseID is always set and never nil
+			database.Postgresql.DatabaseID = &database.ID
 		}
 
 		if isNew {
@@ -43,17 +47,15 @@ func (r *DatabaseRepository) Save(database *Database) (*Database, error) {
 		// Save the specific database type
 		switch database.Type {
 		case DatabaseTypePostgres:
-			if database.Postgresql != nil {
-				database.Postgresql.DatabaseID = &database.ID
-				if database.Postgresql.ID == uuid.Nil {
-					database.Postgresql.ID = uuid.New()
-					if err := tx.Create(database.Postgresql).Error; err != nil {
-						return err
-					}
-				} else {
-					if err := tx.Save(database.Postgresql).Error; err != nil {
-						return err
-					}
+			database.Postgresql.DatabaseID = &database.ID
+			if database.Postgresql.ID == uuid.Nil {
+				database.Postgresql.ID = uuid.New()
+				if err := tx.Create(database.Postgresql).Error; err != nil {
+					return err
+				}
+			} else {
+				if err := tx.Save(database.Postgresql).Error; err != nil {
+					return err
 				}
 			}
 		}
