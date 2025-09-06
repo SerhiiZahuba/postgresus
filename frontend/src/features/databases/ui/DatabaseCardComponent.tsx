@@ -51,6 +51,17 @@ export const DatabaseCardComponent = ({
         <img src={databaseIcon} alt="databaseIcon" className="ml-1 h-4 w-4" />
       </div>
 
+        {database.storage && (
+            <div className="mb flex items-center">
+                <div className="text-sm text-gray-500">Storage: {database.storage.name}</div>
+                <img
+                    src={getStorageLogoFromType(database.storage.type)}
+                    alt="storageIcon"
+                    className="ml-1 h-4 w-4"
+                />
+            </div>
+        )}
+
       {database.lastBackupTime && (
         <div className="mt-3 mb-1 text-xs text-gray-500">
           <span className="font-bold">Last backup</span>
