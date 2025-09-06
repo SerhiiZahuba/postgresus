@@ -6,7 +6,7 @@ import { type Database, DatabaseType } from '../../../entity/databases';
 import { HealthStatus } from '../../../entity/databases/model/HealthStatus';
 import { getUserShortTimeFormat } from '../../../shared/time/getUserTimeFormat';
 
-// 🆕 імпортуємо API та хелпер іконки — ті самі, що ти вже використовуєш
+
 import { type BackupConfig, backupConfigApi } from '../../../entity/backups';
 import { getStorageLogoFromType } from '../../../entity/storages/models/getStorageLogoFromType';
 
@@ -29,10 +29,9 @@ export const DatabaseCardComponent = ({
         databaseType = 'PostgreSQL';
     }
 
-    // 🆕 локальний стейт лише для storage (щоб не тягнути весь backupConfig)
     const [storage, setStorage] = useState<BackupConfig['storage']>();
 
-    // 🆕 підвантажуємо storage так само, як у ShowBackupConfigComponent
+
     useEffect(() => {
         if (!database.id) return;
         let ignore = false;
@@ -72,7 +71,6 @@ export const DatabaseCardComponent = ({
                 <img src={databaseIcon} alt="databaseIcon" className="ml-1 h-4 w-4" />
             </div>
 
-            {/* 🆕 вставляємо БЛОК СТОРАДЖА тут — точно як у ShowBackupConfigComponent */}
             <div className="mb-1 flex w-full items-center">
                 <div className="min-w-[150px]">Storage</div>
                 <div className="flex items-center">
