@@ -70,20 +70,15 @@ export const DatabaseCardComponent = ({
                 <div className="text-sm text-gray-500">Database type: {databaseType}</div>
                 <img src={databaseIcon} alt="databaseIcon" className="ml-1 h-4 w-4" />
             </div>
+            <div data-e2e="card-storage-marker" className="text-[10px] opacity-50">[card v2]</div>
 
-            <div className="mb-1 flex w-full items-center">
-                <div className="min-w-[150px]">Storage</div>
-                <div className="flex items-center">
-                    <div>{storage?.name || ''}</div>
-                    {storage?.type && (
-                        <img
-                            src={getStorageLogoFromType(storage.type)}
-                            alt="storageIcon"
-                            className="ml-1 h-4 w-4"
-                        />
-                    )}
-                </div>
-            </div>
+            {storage && (
+                <div className="mt-3 mb-1 text-xs text-gray-500">
+                    <span className="font-bold">Storage: </span>
+                    <span className="inline-flex items-center">
+      {storage.name}   {storage.type && (  <img  src={getStorageLogoFromType(storage.type)}
+                                alt="storageIcon"   className="ml-1 h-4 w-4"   />     )}
+    </span>     </div>            )}
 
             {database.lastBackupTime && (
                 <div className="mt-3 mb-1 text-xs text-gray-500">
