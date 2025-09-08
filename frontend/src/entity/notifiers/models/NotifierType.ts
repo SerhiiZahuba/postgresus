@@ -4,4 +4,5 @@ export enum NotifierType {
   WEBHOOK = 'WEBHOOK',
   SLACK = 'SLACK',
   DISCORD = 'DISCORD',
+  TEAMS = 'TEAMS',
 }

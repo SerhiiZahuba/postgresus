@@ -37,7 +37,7 @@ Example:
 Before any commit, make sure:
 
 1. You created critical tests for your changes
-2. `golangci-lint fmt` and `golangci-lint run` are passing
+2. `make lint` is passing (for backend) and `npm run lint` is passing (for frontend)
 3. All tests are passing
 4. Project is building successfully
 

@@ -12,6 +12,8 @@ export const getNotifierNameFromType = (type: NotifierType) => {
       return 'Slack';
     case NotifierType.DISCORD:
       return 'Discord';
+    case NotifierType.TEAMS:
+      return 'Teams';
     default:
       return '';
   }
