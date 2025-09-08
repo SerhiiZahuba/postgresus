@@ -1,8 +1,12 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 
+import { backupConfigApi } from '../../../entity/backups';
 import { type Database, DatabaseType } from '../../../entity/databases';
 import { HealthStatus } from '../../../entity/databases/model/HealthStatus';
+import type { Storage } from '../../../entity/storages';
+import { getStorageLogoFromType } from '../../../entity/storages/models/getStorageLogoFromType';
 import { getUserShortTimeFormat } from '../../../shared/time/getUserTimeFormat';
 
 interface Props {
@@ -16,6 +20,8 @@ export const DatabaseCardComponent = ({
   selectedDatabaseId,
   setSelectedDatabaseId,
 }: Props) => {
+  const [storage, setStorage] = useState<Storage | undefined>();
+
   let databaseIcon = '';
   let databaseType = '';
 
@@ -23,6 +29,12 @@ export const DatabaseCardComponent = ({
     databaseIcon = '/icons/databases/postgresql.svg';
     databaseType = 'PostgreSQL';
   }
+
+  useEffect(() => {
+    if (!database.id) return;
+
+    backupConfigApi.getBackupConfigByDbID(database.id).then((res) => setStorage(res?.storage));
+  }, [database.id]);
 
   return (
     <div
@@ -47,9 +59,24 @@ export const DatabaseCardComponent = ({
 
       <div className="mb flex items-center">
         <div className="text-sm text-gray-500">Database type: {databaseType}</div>
-
         <img src={databaseIcon} alt="databaseIcon" className="ml-1 h-4 w-4" />
       </div>
+
+      {storage && (
+        <div className="mb-1 text-sm text-gray-500">
+          <span>Storage: </span>
+          <span className="inline-flex items-center">
+            {storage.name}{' '}
+            {storage.type && (
+              <img
+                src={getStorageLogoFromType(storage.type)}
+                alt="storageIcon"
+                className="ml-1 h-4 w-4"
+              />
+            )}
+          </span>
+        </div>
+      )}
 
       {database.lastBackupTime && (
         <div className="mt-3 mb-1 text-xs text-gray-500">

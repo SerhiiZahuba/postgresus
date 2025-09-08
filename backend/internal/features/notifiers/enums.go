@@ -8,4 +8,5 @@ const (
 	NotifierTypeWebhook  NotifierType = "WEBHOOK"
 	NotifierTypeSlack    NotifierType = "SLACK"
 	NotifierTypeDiscord  NotifierType = "DISCORD"
+	NotifierTypeTeams    NotifierType = "TEAMS"
 )

@@ -4,3 +4,4 @@ postgresus-data/
 pgdata/
 docker-compose.yml
 node_modules/
+.idea

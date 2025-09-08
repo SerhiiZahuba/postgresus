@@ -17,3 +17,6 @@ export { validateSlackNotifier } from './models/slack/validateSlackNotifier';
 
 export type { DiscordNotifier } from './models/discord/DiscordNotifier';
 export { validateDiscordNotifier } from './models/discord/validateDiscordNotifier';
+
+export type { TeamsNotifier } from './models/teams/TeamsNotifier';
+export { validateTeamsNotifier } from './models/teams/validateTeamsNotifier';
