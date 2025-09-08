@@ -11,6 +11,7 @@ import {
   validateSlackNotifier,
   validateTelegramNotifier,
   validateWebhookNotifier,
+  validateTeamsNotifier,
 } from '../../../../entity/notifiers';
 import { getNotifierLogoFromType } from '../../../../entity/notifiers/models/getNotifierLogoFromType';
 import { ToastHelper } from '../../../../shared/toast';
@@ -19,6 +20,7 @@ import { EditEmailNotifierComponent } from './notifiers/EditEmailNotifierCompone
 import { EditSlackNotifierComponent } from './notifiers/EditSlackNotifierComponent';
 import { EditTelegramNotifierComponent } from './notifiers/EditTelegramNotifierComponent';
 import { EditWebhookNotifierComponent } from './notifiers/EditWebhookNotifierComponent';
+import { EditTeamsNotifierComponent } from './notifiers/EditTeamsNotifierComponent';
 
 interface Props {
   isShowClose: boolean;
@@ -90,6 +92,7 @@ export function EditNotifierComponent({
 
     notifier.emailNotifier = undefined;
     notifier.telegramNotifier = undefined;
+    notifier.teamsNotifier = undefined;
 
     if (type === NotifierType.TELEGRAM) {
       notifier.telegramNotifier = {
@@ -127,6 +130,10 @@ export function EditNotifierComponent({
         channelWebhookUrl: '',
       };
     }
+
+      if (type === NotifierType.TEAMS) {
+          notifier.teamsNotifier = { powerAutomateUrl: '' };
+      }
 
     setNotifier(
       JSON.parse(
@@ -183,6 +190,10 @@ export function EditNotifierComponent({
       return validateDiscordNotifier(notifier.discordNotifier);
     }
 
+      if (notifier.notifierType === NotifierType.TEAMS && notifier.teamsNotifier) {
+          return validateTeamsNotifier(notifier.teamsNotifier);
+      }
+
     return false;
   };
 
@@ -218,6 +229,7 @@ export function EditNotifierComponent({
             { label: 'Webhook', value: NotifierType.WEBHOOK },
             { label: 'Slack', value: NotifierType.SLACK },
             { label: 'Discord', value: NotifierType.DISCORD },
+            { label: 'Teams', value: NotifierType.TEAMS },
           ]}
           onChange={(value) => {
             setNotifierType(value);
@@ -272,6 +284,14 @@ export function EditNotifierComponent({
             setIsUnsaved={setIsUnsaved}
           />
         )}
+          {notifier?.notifierType === NotifierType.TEAMS && (
+              <EditTeamsNotifierComponent
+                  notifier={notifier}
+                  setNotifier={setNotifier}
+                  setIsUnsaved={setIsUnsaved}
+              />
+          )}
+
       </div>
 
       <div className="mt-3 flex">

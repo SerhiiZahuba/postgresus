@@ -4,6 +4,7 @@ import type { EmailNotifier } from './email/EmailNotifier';
 import type { SlackNotifier } from './slack/SlackNotifier';
 import type { TelegramNotifier } from './telegram/TelegramNotifier';
 import type { WebhookNotifier } from './webhook/WebhookNotifier';
+import type { TeamsNotifier } from './teams/TeamsNotifier';
 
 export interface Notifier {
   id: string;
@@ -17,4 +18,5 @@ export interface Notifier {
   webhookNotifier?: WebhookNotifier;
   slackNotifier?: SlackNotifier;
   discordNotifier?: DiscordNotifier;
+  teamsNotifier?: TeamsNotifier;
 }

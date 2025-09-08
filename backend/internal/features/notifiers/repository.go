@@ -13,6 +13,7 @@ func (r *NotifierRepository) Save(notifier *Notifier) (*Notifier, error) {
 	db := storage.GetDb()
 
 	err := db.Transaction(func(tx *gorm.DB) error {
+
 		switch notifier.NotifierType {
 		case NotifierTypeTelegram:
 			if notifier.TelegramNotifier != nil {
@@ -34,67 +35,82 @@ func (r *NotifierRepository) Save(notifier *Notifier) (*Notifier, error) {
 			if notifier.DiscordNotifier != nil {
 				notifier.DiscordNotifier.NotifierID = notifier.ID
 			}
+		case NotifierTypeTeams:
+			if notifier.TeamsNotifier != nil {
+				notifier.TeamsNotifier.NotifierID = notifier.ID
+			}
 		}
 
+
 		if notifier.ID == uuid.Nil {
-			if err := tx.Create(notifier).
+			if err := tx.
 				Omit(
 					"TelegramNotifier",
 					"EmailNotifier",
 					"WebhookNotifier",
 					"SlackNotifier",
 					"DiscordNotifier",
+					"TeamsNotifier",
 				).
-				Error; err != nil {
+				Create(notifier).Error; err != nil {
 				return err
 			}
 		} else {
-			if err := tx.Save(notifier).
+			if err := tx.
 				Omit(
 					"TelegramNotifier",
 					"EmailNotifier",
 					"WebhookNotifier",
 					"SlackNotifier",
 					"DiscordNotifier",
+					"TeamsNotifier",
 				).
-				Error; err != nil {
+				Save(notifier).Error; err != nil {
 				return err
 			}
 		}
+
 
 		switch notifier.NotifierType {
 		case NotifierTypeTelegram:
 			if notifier.TelegramNotifier != nil {
-				notifier.TelegramNotifier.NotifierID = notifier.ID // Ensure ID is set
+				notifier.TelegramNotifier.NotifierID = notifier.ID
 				if err := tx.Save(notifier.TelegramNotifier).Error; err != nil {
 					return err
 				}
 			}
 		case NotifierTypeEmail:
 			if notifier.EmailNotifier != nil {
-				notifier.EmailNotifier.NotifierID = notifier.ID // Ensure ID is set
+				notifier.EmailNotifier.NotifierID = notifier.ID
 				if err := tx.Save(notifier.EmailNotifier).Error; err != nil {
 					return err
 				}
 			}
 		case NotifierTypeWebhook:
 			if notifier.WebhookNotifier != nil {
-				notifier.WebhookNotifier.NotifierID = notifier.ID // Ensure ID is set
+				notifier.WebhookNotifier.NotifierID = notifier.ID
 				if err := tx.Save(notifier.WebhookNotifier).Error; err != nil {
 					return err
 				}
 			}
 		case NotifierTypeSlack:
 			if notifier.SlackNotifier != nil {
-				notifier.SlackNotifier.NotifierID = notifier.ID // Ensure ID is set
+				notifier.SlackNotifier.NotifierID = notifier.ID
 				if err := tx.Save(notifier.SlackNotifier).Error; err != nil {
 					return err
 				}
 			}
 		case NotifierTypeDiscord:
 			if notifier.DiscordNotifier != nil {
-				notifier.DiscordNotifier.NotifierID = notifier.ID // Ensure ID is set
+				notifier.DiscordNotifier.NotifierID = notifier.ID
 				if err := tx.Save(notifier.DiscordNotifier).Error; err != nil {
+					return err
+				}
+			}
+		case NotifierTypeTeams:
+			if notifier.TeamsNotifier != nil {
+				notifier.TeamsNotifier.NotifierID = notifier.ID
+				if err := tx.Save(notifier.TeamsNotifier).Error; err != nil {
 					return err
 				}
 			}
@@ -120,6 +136,7 @@ func (r *NotifierRepository) FindByID(id uuid.UUID) (*Notifier, error) {
 		Preload("WebhookNotifier").
 		Preload("SlackNotifier").
 		Preload("DiscordNotifier").
+		Preload("TeamsNotifier").
 		Where("id = ?", id).
 		First(&notifier).Error; err != nil {
 		return nil, err
@@ -138,6 +155,7 @@ func (r *NotifierRepository) FindByUserID(userID uuid.UUID) ([]*Notifier, error)
 		Preload("WebhookNotifier").
 		Preload("SlackNotifier").
 		Preload("DiscordNotifier").
+		Preload("TeamsNotifier").
 		Where("user_id = ?", userID).
 		Order("name ASC").
 		Find(&notifiers).Error; err != nil {
@@ -149,7 +167,7 @@ func (r *NotifierRepository) FindByUserID(userID uuid.UUID) ([]*Notifier, error)
 
 func (r *NotifierRepository) Delete(notifier *Notifier) error {
 	return storage.GetDb().Transaction(func(tx *gorm.DB) error {
-		// Delete specific notifier based on type
+
 		switch notifier.NotifierType {
 		case NotifierTypeTelegram:
 			if notifier.TelegramNotifier != nil {
@@ -181,9 +199,15 @@ func (r *NotifierRepository) Delete(notifier *Notifier) error {
 					return err
 				}
 			}
+		case NotifierTypeTeams:
+			if notifier.TeamsNotifier != nil {
+				if err := tx.Delete(notifier.TeamsNotifier).Error; err != nil {
+					return err
+				}
+			}
 		}
 
-		// Delete the main notifier
+
 		return tx.Delete(notifier).Error
 	})
 }

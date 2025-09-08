@@ -6,6 +6,7 @@ import { ShowEmailNotifierComponent } from './notifier/ShowEmailNotifierComponen
 import { ShowSlackNotifierComponent } from './notifier/ShowSlackNotifierComponent';
 import { ShowTelegramNotifierComponent } from './notifier/ShowTelegramNotifierComponent';
 import { ShowWebhookNotifierComponent } from './notifier/ShowWebhookNotifierComponent';
+import { ShowTeamsNotifierComponent } from './notifier/ShowTeamsNotifierComponent';
 
 interface Props {
   notifier: Notifier;
@@ -41,6 +42,10 @@ export function ShowNotifierComponent({ notifier }: Props) {
         {notifier?.notifierType === NotifierType.DISCORD && (
           <ShowDiscordNotifierComponent notifier={notifier} />
         )}
+
+          {notifier?.notifierType === NotifierType.TEAMS && (
+              <ShowTeamsNotifierComponent notifier={notifier} />
+          )}
       </div>
     </div>
   );
