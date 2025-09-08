@@ -27,6 +27,17 @@ export function EditTeamsNotifierComponent({ notifier, setNotifier, setIsUnsaved
 
   return (
     <>
+      <div className="mb-1 ml-[130px] max-w-[200px]" style={{ lineHeight: 1 }}>
+        <a
+          className="text-xs !text-blue-600"
+          href="https://postgresus.com/notifier-teams"
+          target="_blank"
+          rel="noreferrer"
+        >
+          How to connect Microsoft Teams?
+        </a>
+      </div>
+
       <div className="flex items-center">
         <div className="w-[130px] min-w-[130px]">Power Automate URL</div>
 
@@ -46,12 +57,6 @@ export function EditTeamsNotifierComponent({ notifier, setNotifier, setIsUnsaved
         >
           <InfoCircleOutlined className="ml-2" style={{ color: 'gray' }} />
         </Tooltip>
-      </div>
-
-      <div className="mb-1 ml-[130px] max-w-[420px] text-xs text-gray-500">
-        1) In Power Automate create Flow with triggers <i>When an HTTP request is received</i>.
-        <br />
-        2) Press <i>Save</i> — you can see URL. Copy urk to this row.
       </div>
     </>
   );
