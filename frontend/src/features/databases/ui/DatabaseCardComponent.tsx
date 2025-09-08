@@ -2,13 +2,12 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
+import { backupConfigApi } from '../../../entity/backups';
 import { type Database, DatabaseType } from '../../../entity/databases';
 import { HealthStatus } from '../../../entity/databases/model/HealthStatus';
-import { getUserShortTimeFormat } from '../../../shared/time/getUserTimeFormat';
-
-
-import { type BackupConfig, backupConfigApi } from '../../../entity/backups';
+import type { Storage } from '../../../entity/storages';
 import { getStorageLogoFromType } from '../../../entity/storages/models/getStorageLogoFromType';
+import { getUserShortTimeFormat } from '../../../shared/time/getUserTimeFormat';
 
 interface Props {
     database: Database;
@@ -21,6 +20,8 @@ export const DatabaseCardComponent = ({
                                           selectedDatabaseId,
                                           setSelectedDatabaseId,
                                       }: Props) => {
+    const [storage, setStorage] = useState<Storage | undefined>();
+
     let databaseIcon = '';
     let databaseType = '';
 
@@ -29,20 +30,10 @@ export const DatabaseCardComponent = ({
         databaseType = 'PostgreSQL';
     }
 
-    const [storage, setStorage] = useState<BackupConfig['storage']>();
-
-
     useEffect(() => {
         if (!database.id) return;
-        let ignore = false;
 
-        backupConfigApi.getBackupConfigByDbID(database.id).then((res) => {
-            if (!ignore) setStorage(res?.storage);
-        });
-
-        return () => {
-            ignore = true;
-        };
+        backupConfigApi.getBackupConfigByDbID(database.id).then((res) => setStorage(res?.storage));
     }, [database.id]);
 
     return (
@@ -70,15 +61,22 @@ export const DatabaseCardComponent = ({
                 <div className="text-sm text-gray-500">Database type: {databaseType}</div>
                 <img src={databaseIcon} alt="databaseIcon" className="ml-1 h-4 w-4" />
             </div>
-            <div data-e2e="card-storage-marker" className="text-[10px] opacity-50">[card v2]</div>
 
             {storage && (
-                <div className="mt-3 mb-1 text-xs text-gray-500">
-                    <span className="font-bold">Storage: </span>
+                <div className="mb-1 text-sm text-gray-500">
+                    <span>Storage: </span>
                     <span className="inline-flex items-center">
-      {storage.name}   {storage.type && (  <img  src={getStorageLogoFromType(storage.type)}
-                                alt="storageIcon"   className="ml-1 h-4 w-4"   />     )}
-    </span>     </div>            )}
+            {storage.name}{' '}
+                        {storage.type && (
+                            <img
+                                src={getStorageLogoFromType(storage.type)}
+                                alt="storageIcon"
+                                className="ml-1 h-4 w-4"
+                            />
+                        )}
+          </span>
+                </div>
+            )}
 
             {database.lastBackupTime && (
                 <div className="mt-3 mb-1 text-xs text-gray-500">
