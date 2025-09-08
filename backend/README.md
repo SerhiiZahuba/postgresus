@@ -9,44 +9,39 @@ instead of postgresus-db from docker-compose.yml in the root folder.
 
 # Run
 
-To build:
-
-> go build /cmd/main.go
-
 To run:
 
-> go run /cmd/main.go
+> make run
 
 To run tests:
 
-> go test ./internal/... 
+> make test
 
 Before commit (make sure `golangci-lint` is installed):
 
-> golangci-lint fmt
-> golangci-lint run
+> make lint
 
 # Migrations
 
 To create migration:
 
-> goose create MIGRATION_NAME sql
+> make migration-create name=MIGRATION_NAME
 
 To run migrations:
 
-> goose up
+> make migration-up
 
 If latest migration failed:
 
 To rollback on migration:
 
-> goose down
+> make migration-down
 
 # Swagger
 
 To generate swagger docs:
 
-> swag init -g .\cmd\main.go -o swagger
+> make swagger
 
 Swagger URL is:
 
