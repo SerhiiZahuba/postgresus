@@ -75,15 +75,6 @@ func Test_Storage_BasicOperations(t *testing.T) {
 			},
 		},
 		{
-			name: "GoogleDriveStorage",
-			storage: &google_drive_storage.GoogleDriveStorage{
-				StorageID:    uuid.New(),
-				ClientID:     config.GetEnv().TestGoogleDriveClientID,
-				ClientSecret: config.GetEnv().TestGoogleDriveClientSecret,
-				TokenJSON:    config.GetEnv().TestGoogleDriveTokenJSON,
-			},
-		},
-		{
 			name: "NASStorage",
 			storage: &nas_storage.NASStorage{
 				StorageID: uuid.New(),
@@ -97,6 +88,26 @@ func Test_Storage_BasicOperations(t *testing.T) {
 				Path:      "test-files",
 			},
 		},
+	}
+
+	// Add Google Drive storage test only if environment variables are available
+	env := config.GetEnv()
+	if env.TestGoogleDriveClientID != "" && env.TestGoogleDriveClientSecret != "" &&
+		env.TestGoogleDriveTokenJSON != "" {
+		testCases = append(testCases, struct {
+			name    string
+			storage StorageFileSaver
+		}{
+			name: "GoogleDriveStorage",
+			storage: &google_drive_storage.GoogleDriveStorage{
+				StorageID:    uuid.New(),
+				ClientID:     env.TestGoogleDriveClientID,
+				ClientSecret: env.TestGoogleDriveClientSecret,
+				TokenJSON:    env.TestGoogleDriveTokenJSON,
+			},
+		})
+	} else {
+		t.Log("Skipping Google Drive storage test: missing environment variables")
 	}
 
 	for _, tc := range testCases {
@@ -221,9 +232,6 @@ func setupS3Container(ctx context.Context) (*S3Container, error) {
 
 func validateEnvVariables(t *testing.T) {
 	env := config.GetEnv()
-	assert.NotEmpty(t, env.TestGoogleDriveClientID, "TEST_GOOGLE_DRIVE_CLIENT_ID is empty")
-	assert.NotEmpty(t, env.TestGoogleDriveClientSecret, "TEST_GOOGLE_DRIVE_CLIENT_SECRET is empty")
-	assert.NotEmpty(t, env.TestGoogleDriveTokenJSON, "TEST_GOOGLE_DRIVE_TOKEN_JSON is empty")
 	assert.NotEmpty(t, env.TestMinioPort, "TEST_MINIO_PORT is empty")
 	assert.NotEmpty(t, env.TestNASPort, "TEST_NAS_PORT is empty")
 }
