@@ -13,10 +13,10 @@ COPY frontend/ ./
 
 # Copy .env file (with fallback to .env.production.example)
 RUN if [ ! -f .env ]; then \
-      if [ -f .env.production.example ]; then \
-        cp .env.production.example .env; \
-      fi; \
-    fi
+  if [ -f .env.production.example ]; then \
+  cp .env.production.example .env; \
+  fi; \
+  fi
 
 RUN npm run build
 
@@ -58,9 +58,9 @@ ARG TARGETOS
 ARG TARGETARCH
 ARG TARGETVARIANT
 RUN CGO_ENABLED=0 \
-    GOOS=$TARGETOS \
-    GOARCH=$TARGETARCH \
-    go build -o /app/main ./cmd/main.go
+  GOOS=$TARGETOS \
+  GOARCH=$TARGETARCH \
+  go build -o /app/main ./cmd/main.go
 
 
 # ========= RUNTIME =========
@@ -71,22 +71,25 @@ ARG APP_VERSION=dev
 LABEL org.opencontainers.image.version=$APP_VERSION
 ENV APP_VERSION=$APP_VERSION
 
+# Set production mode for Docker containers
+ENV ENV_MODE=production
+
 # Install PostgreSQL server and client tools (versions 13-17)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-       wget ca-certificates gnupg lsb-release sudo gosu && \
-    wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
-    echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
-      > /etc/apt/sources.list.d/pgdg.list && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-       postgresql-17 postgresql-client-13 postgresql-client-14 postgresql-client-15 \
-       postgresql-client-16 postgresql-client-17 && \
-    rm -rf /var/lib/apt/lists/*
+  wget ca-certificates gnupg lsb-release sudo gosu && \
+  wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+  echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+  > /etc/apt/sources.list.d/pgdg.list && \
+  apt-get update && \
+  apt-get install -y --no-install-recommends \
+  postgresql-17 postgresql-client-13 postgresql-client-14 postgresql-client-15 \
+  postgresql-client-16 postgresql-client-17 && \
+  rm -rf /var/lib/apt/lists/*
 
 # Create postgres user and set up directories
 RUN useradd -m -s /bin/bash postgres || true && \
-    mkdir -p /postgresus-data/pgdata && \
-    chown -R postgres:postgres /postgresus-data/pgdata
+  mkdir -p /postgresus-data/pgdata && \
+  chown -R postgres:postgres /postgresus-data/pgdata
 
 WORKDIR /app
 
@@ -105,10 +108,10 @@ COPY --from=backend-build /app/ui/build ./ui/build
 # Copy .env file (with fallback to .env.production.example)
 COPY backend/.env* /app/
 RUN if [ ! -f /app/.env ]; then \
-      if [ -f /app/.env.production.example ]; then \
-        cp /app/.env.production.example /app/.env; \
-      fi; \
-    fi
+  if [ -f /app/.env.production.example ]; then \
+  cp /app/.env.production.example /app/.env; \
+  fi; \
+  fi
 
 # Create startup script
 COPY <<EOF /app/start.sh
@@ -160,7 +163,8 @@ done
 echo "Setting up database and user..."
 gosu postgres \$PG_BIN/psql -p 5437 -h localhost -d postgres << 'SQL'
 ALTER USER postgres WITH PASSWORD 'Q1234567';
-CREATE DATABASE "postgresus" OWNER postgres;
+SELECT 'CREATE DATABASE postgresus OWNER postgres'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'postgresus')\gexec
 \q
 SQL
 
