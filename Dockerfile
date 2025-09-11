@@ -168,8 +168,8 @@ gosu postgres \$PG_BIN/psql -p 5437 -h localhost -d postgres << 'SQL'
 ALTER USER postgres WITH PASSWORD 'Q1234567';
 SELECT 'CREATE DATABASE postgresus OWNER postgres'
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'postgresus')
-\gexec
-\q
+\\gexec
+\\q
 SQL
 
 # Start the main application
