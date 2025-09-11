@@ -32,8 +32,7 @@ ARG TARGETARCH
 # binary is compiled for the target architecture instead of downloading a
 # prebuilt binary which may have the wrong architecture (causes exec format
 # errors on ARM).
-RUN env GOBIN=/usr/local/bin GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH:-amd64} \
-  go install github.com/pressly/goose/v3/cmd/goose@latest
+RUN GOBIN=/usr/local/bin GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH:-amd64} go install github.com/pressly/goose/v3/cmd/goose@v3.24.3
 RUN go install github.com/swaggo/swag/cmd/swag@v1.16.4
 
 # Set working directory
@@ -64,7 +63,7 @@ RUN CGO_ENABLED=0 \
 
 
 # ========= RUNTIME =========
-FROM --platform=$TARGETPLATFORM debian:bookworm-slim
+FROM debian:bookworm-slim
 
 # Add version metadata to runtime image
 ARG APP_VERSION=dev
