@@ -21,10 +21,19 @@ RUN if [ ! -f .env ]; then \
 RUN npm run build
 
 # ========= BUILD BACKEND =========
+# Backend build stage
 FROM --platform=$BUILDPLATFORM golang:1.23.3 AS backend-build
 
-# Install Go public tools needed in runtime
-RUN curl -fsSL https://raw.githubusercontent.com/pressly/goose/master/install.sh | sh
+# Make TARGET args available early so tools built here match the final image arch
+ARG TARGETOS
+ARG TARGETARCH
+
+# Install Go public tools needed in runtime. Use `go install` for goose so the
+# binary is compiled for the target architecture instead of downloading a
+# prebuilt binary which may have the wrong architecture (causes exec format
+# errors on ARM).
+RUN env GOBIN=/usr/local/bin GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH:-amd64} \
+  go install github.com/pressly/goose/v3/cmd/goose@latest
 RUN go install github.com/swaggo/swag/cmd/swag@v1.16.4
 
 # Set working directory
