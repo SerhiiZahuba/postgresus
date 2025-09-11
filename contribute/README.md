@@ -40,6 +40,9 @@ Before any commit, make sure:
 2. `make lint` is passing (for backend) and `npm run lint` is passing (for frontend)
 3. All tests are passing
 4. Project is building successfully
+5. All your commits should be squashed into one commit with proper message (or to meaningful parts)
+6. Code do really refactored and production ready
+7. You have one single PR per one feature (at least, if features not connected)
 
 ### Automated Versioning
 
