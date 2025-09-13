@@ -86,7 +86,6 @@ Backups flow:
 Notifications flow:
 
 - add Mattermost
-- add MS Teams
 
 Extra:
 
@@ -99,6 +98,7 @@ Monitoring flow:
 
 - add system metrics (CPU, RAM, disk, IO) (in progress by Rostislav Dugin)
 - add queries stats (slowest, most frequent, etc. via pg_stat_statements)
+- add triggering backups and restores via API
 - add alerting for slow queries (listen for slow query and if they reach >100ms - send message)
 - add alerting for high resource usage (listen for high resource usage and if they reach >90% - send message)
 - add DB size distribution chart (tables, indexes, etc.)

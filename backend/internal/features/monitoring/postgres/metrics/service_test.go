@@ -272,7 +272,13 @@ func Test_GetMetricsWithFilterByType_FilterWorks(t *testing.T) {
 	}
 
 	// Test filtering by System RAM type
-	systemRamMetrics, err := service.GetMetrics(testUser, database.ID, MetricsTypeSystemRAM, from, to)
+	systemRamMetrics, err := service.GetMetrics(
+		testUser,
+		database.ID,
+		MetricsTypeSystemRAM,
+		from,
+		to,
+	)
 	assert.NoError(t, err)
 	assert.Len(t, systemRamMetrics, 1)
 	for _, metric := range systemRamMetrics {
@@ -287,7 +293,13 @@ func Test_GetMetricsWithFilterByType_FilterWorks(t *testing.T) {
 
 	// Test time filtering - get only recent metrics (last hour)
 	recentFrom := now.Add(-1 * time.Hour)
-	recentRamMetrics, err := service.GetMetrics(testUser, database.ID, MetricsTypeDbRAM, recentFrom, to)
+	recentRamMetrics, err := service.GetMetrics(
+		testUser,
+		database.ID,
+		MetricsTypeDbRAM,
+		recentFrom,
+		to,
+	)
 	assert.NoError(t, err)
 	assert.Len(t, recentRamMetrics, 1) // Only the metric from 1 hour ago
 	assert.Equal(t, float64(2048000), recentRamMetrics[0].Value)
