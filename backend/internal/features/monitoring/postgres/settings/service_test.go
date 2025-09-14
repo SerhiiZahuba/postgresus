@@ -58,7 +58,7 @@ func Test_DatabaseCreated_SettingsCreated(t *testing.T) {
 
 	// Verify default settings values
 	assert.Equal(t, database.ID, settings.DatabaseID)
-	assert.Equal(t, int64(15), settings.MonitoringIntervalSeconds)
+	assert.Equal(t, int64(60), settings.MonitoringIntervalSeconds)
 	assert.True(t, settings.IsDbResourcesMonitoringEnabled) // Always enabled
 }
 
@@ -81,7 +81,7 @@ func Test_GetSettingsByDbID_SettingsReturned(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, settings)
 	assert.Equal(t, database.ID, settings.DatabaseID)
-	assert.Equal(t, int64(15), settings.MonitoringIntervalSeconds)
+	assert.Equal(t, int64(60), settings.MonitoringIntervalSeconds)
 	assert.True(t, settings.IsDbResourcesMonitoringEnabled) // Always enabled
 
 	// Test 2: Get settings that already exist
