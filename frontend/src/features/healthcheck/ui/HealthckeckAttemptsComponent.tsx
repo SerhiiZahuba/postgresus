@@ -118,7 +118,7 @@ export const HealthckeckAttemptsComponent = ({ database }: Props) => {
   }
 
   return (
-    <div className="mt-5 w-full rounded bg-white p-5 shadow">
+    <div className="w-full rounded-tr-md rounded-br-md rounded-bl-md bg-white p-5 shadow">
       <h2 className="text-xl font-bold">Healthcheck attempts</h2>
 
       <div className="mt-4 flex items-center gap-2">

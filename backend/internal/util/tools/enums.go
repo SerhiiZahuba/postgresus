@@ -8,8 +8,6 @@ import (
 type PostgresqlExtension string
 
 const (
-	// needed for system monitoring (CPU, RAM)
-	PostgresqlExtensionPgProctab PostgresqlExtension = "pg_proctab"
 	// needed for queries monitoring
 	PostgresqlExtensionPgStatMonitor PostgresqlExtension = "pg_stat_statements"
 )

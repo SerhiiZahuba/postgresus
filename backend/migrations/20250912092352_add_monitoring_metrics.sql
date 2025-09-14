@@ -4,9 +4,7 @@
 -- Create postgres_monitoring_settings table
 CREATE TABLE postgres_monitoring_settings (
     database_id                             UUID PRIMARY KEY,
-    is_system_resources_monitoring_enabled  BOOLEAN NOT NULL DEFAULT FALSE,
     is_db_resources_monitoring_enabled      BOOLEAN NOT NULL DEFAULT FALSE,
-    is_queries_monitoring_enabled           BOOLEAN NOT NULL DEFAULT FALSE,
     monitoring_interval_seconds             BIGINT NOT NULL DEFAULT 60,
     installed_extensions_raw                TEXT
 );

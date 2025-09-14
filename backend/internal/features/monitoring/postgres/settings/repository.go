@@ -48,3 +48,18 @@ func (r *PostgresMonitoringSettingsRepository) GetByDbIDWithRelations(
 
 	return &settings, nil
 }
+
+func (r *PostgresMonitoringSettingsRepository) GetAllDbsWithEnabledDbMonitoring() (
+	[]PostgresMonitoringSettings, error,
+) {
+	var settings []PostgresMonitoringSettings
+
+	if err := storage.
+		GetDb().
+		Where("is_db_resources_monitoring_enabled = ?", true).
+		Find(&settings).Error; err != nil {
+		return nil, err
+	}
+
+	return settings, nil
+}

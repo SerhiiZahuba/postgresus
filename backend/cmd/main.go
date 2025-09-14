@@ -20,6 +20,7 @@ import (
 	"postgresus-backend/internal/features/disk"
 	healthcheck_attempt "postgresus-backend/internal/features/healthcheck/attempt"
 	healthcheck_config "postgresus-backend/internal/features/healthcheck/config"
+	postgres_monitoring_collectors "postgresus-backend/internal/features/monitoring/postgres/collectors"
 	postgres_monitoring_metrics "postgresus-backend/internal/features/monitoring/postgres/metrics"
 	postgres_monitoring_settings "postgresus-backend/internal/features/monitoring/postgres/settings"
 	"postgresus-backend/internal/features/notifiers"
@@ -181,7 +182,6 @@ func setUpRoutes(r *gin.Engine) {
 
 func setUpDependencies() {
 	backups.SetupDependencies()
-	backups.SetupDependencies()
 	restores.SetupDependencies()
 	healthcheck_config.SetupDependencies()
 	postgres_monitoring_settings.SetupDependencies()
@@ -204,11 +204,15 @@ func runBackgroundTasks(log *slog.Logger) {
 	})
 
 	go runWithPanicLogging(log, "healthcheck attempt background service", func() {
-		healthcheck_attempt.GetHealthcheckAttemptBackgroundService().RunBackgroundTasks()
+		healthcheck_attempt.GetHealthcheckAttemptBackgroundService().Run()
 	})
 
 	go runWithPanicLogging(log, "postgres monitoring metrics background service", func() {
 		postgres_monitoring_metrics.GetPostgresMonitoringMetricsBackgroundService().Run()
+	})
+
+	go runWithPanicLogging(log, "postgres monitoring collectors background service", func() {
+		postgres_monitoring_collectors.GetDbMonitoringBackgroundService().Run()
 	})
 }
 

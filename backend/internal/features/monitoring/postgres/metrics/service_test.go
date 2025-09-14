@@ -65,13 +65,6 @@ func Test_GetMetrics_MetricsReturned(t *testing.T) {
 			Value:      2048000,
 			CreatedAt:  now.Add(-1 * time.Hour),
 		},
-		{
-			DatabaseID: database.ID,
-			Metric:     MetricsTypeSystemCPU,
-			ValueType:  MetricsValueTypePercent,
-			Value:      75.5,
-			CreatedAt:  now.Add(-30 * time.Minute),
-		},
 	}
 
 	// Insert test metrics
@@ -92,14 +85,6 @@ func Test_GetMetrics_MetricsReturned(t *testing.T) {
 	assert.Equal(t, float64(1024000), metrics[1].Value)
 	assert.Equal(t, MetricsTypeDbRAM, metrics[0].Metric)
 	assert.Equal(t, MetricsValueTypeByte, metrics[0].ValueType)
-
-	// Test getting CPU metrics
-	cpuMetrics, err := service.GetMetrics(testUser, database.ID, MetricsTypeSystemCPU, from, to)
-	assert.NoError(t, err)
-	assert.Len(t, cpuMetrics, 1)
-	assert.Equal(t, float64(75.5), cpuMetrics[0].Value)
-	assert.Equal(t, MetricsTypeSystemCPU, cpuMetrics[0].Metric)
-	assert.Equal(t, MetricsValueTypePercent, cpuMetrics[0].ValueType)
 
 	// Test access control - create another user and test they can't access this database
 	anotherUser := &users_models.User{
@@ -204,37 +189,6 @@ func Test_GetMetricsWithFilterByType_FilterWorks(t *testing.T) {
 			Value:      2048000,
 			CreatedAt:  now.Add(-1 * time.Hour),
 		},
-		// DB ROM metrics
-		{
-			DatabaseID: database.ID,
-			Metric:     MetricsTypeDbROM,
-			ValueType:  MetricsValueTypeByte,
-			Value:      5000000,
-			CreatedAt:  now.Add(-90 * time.Minute),
-		},
-		{
-			DatabaseID: database.ID,
-			Metric:     MetricsTypeDbROM,
-			ValueType:  MetricsValueTypeByte,
-			Value:      5500000,
-			CreatedAt:  now.Add(-30 * time.Minute),
-		},
-		// System CPU metrics
-		{
-			DatabaseID: database.ID,
-			Metric:     MetricsTypeSystemCPU,
-			ValueType:  MetricsValueTypePercent,
-			Value:      75.5,
-			CreatedAt:  now.Add(-45 * time.Minute),
-		},
-		// System RAM metrics
-		{
-			DatabaseID: database.ID,
-			Metric:     MetricsTypeSystemRAM,
-			ValueType:  MetricsValueTypePercent,
-			Value:      65.2,
-			CreatedAt:  now.Add(-25 * time.Minute),
-		},
 	}
 
 	// Insert test metrics
@@ -251,39 +205,6 @@ func Test_GetMetricsWithFilterByType_FilterWorks(t *testing.T) {
 	for _, metric := range ramMetrics {
 		assert.Equal(t, MetricsTypeDbRAM, metric.Metric)
 		assert.Equal(t, MetricsValueTypeByte, metric.ValueType)
-	}
-
-	// Test filtering by DB ROM type
-	romMetrics, err := service.GetMetrics(testUser, database.ID, MetricsTypeDbROM, from, to)
-	assert.NoError(t, err)
-	assert.Len(t, romMetrics, 2)
-	for _, metric := range romMetrics {
-		assert.Equal(t, MetricsTypeDbROM, metric.Metric)
-		assert.Equal(t, MetricsValueTypeByte, metric.ValueType)
-	}
-
-	// Test filtering by System CPU type
-	cpuMetrics, err := service.GetMetrics(testUser, database.ID, MetricsTypeSystemCPU, from, to)
-	assert.NoError(t, err)
-	assert.Len(t, cpuMetrics, 1)
-	for _, metric := range cpuMetrics {
-		assert.Equal(t, MetricsTypeSystemCPU, metric.Metric)
-		assert.Equal(t, MetricsValueTypePercent, metric.ValueType)
-	}
-
-	// Test filtering by System RAM type
-	systemRamMetrics, err := service.GetMetrics(
-		testUser,
-		database.ID,
-		MetricsTypeSystemRAM,
-		from,
-		to,
-	)
-	assert.NoError(t, err)
-	assert.Len(t, systemRamMetrics, 1)
-	for _, metric := range systemRamMetrics {
-		assert.Equal(t, MetricsTypeSystemRAM, metric.Metric)
-		assert.Equal(t, MetricsValueTypePercent, metric.ValueType)
 	}
 
 	// Test filtering by non-existent metric type (should return empty)

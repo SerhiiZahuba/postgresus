@@ -13,10 +13,8 @@ type PostgresMonitoringSettings struct {
 	DatabaseID uuid.UUID           `json:"databaseId" gorm:"primaryKey;column:database_id;not null"`
 	Database   *databases.Database `json:"database"   gorm:"foreignKey:DatabaseID"`
 
-	IsSystemResourcesMonitoringEnabled bool  `json:"isSystemResourcesMonitoringEnabled" gorm:"column:is_system_resources_monitoring_enabled;not null"`
-	IsDbResourcesMonitoringEnabled     bool  `json:"isDbResourcesMonitoringEnabled"     gorm:"column:is_db_resources_monitoring_enabled;not null"`
-	IsQueriesMonitoringEnabled         bool  `json:"isQueriesMonitoringEnabled"         gorm:"column:is_queries_monitoring_enabled;not null"`
-	MonitoringIntervalSeconds          int64 `json:"monitoringIntervalSeconds"          gorm:"column:monitoring_interval_seconds;not null"`
+	IsDbResourcesMonitoringEnabled bool  `json:"isDbResourcesMonitoringEnabled" gorm:"column:is_db_resources_monitoring_enabled;not null"`
+	MonitoringIntervalSeconds      int64 `json:"monitoringIntervalSeconds"      gorm:"column:monitoring_interval_seconds;not null"`
 
 	InstalledExtensions    []tools.PostgresqlExtension `json:"installedExtensions" gorm:"-"`
 	InstalledExtensionsRaw string                      `json:"-"                   gorm:"column:installed_extensions_raw"`

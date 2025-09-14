@@ -13,7 +13,7 @@ type HealthcheckAttemptBackgroundService struct {
 	logger                   *slog.Logger
 }
 
-func (s *HealthcheckAttemptBackgroundService) RunBackgroundTasks() {
+func (s *HealthcheckAttemptBackgroundService) Run() {
 	// first healthcheck immediately
 	s.checkDatabases()
 

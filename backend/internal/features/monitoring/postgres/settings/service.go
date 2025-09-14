@@ -5,7 +5,6 @@ import (
 	"postgresus-backend/internal/features/databases"
 	users_models "postgresus-backend/internal/features/users/models"
 	"postgresus-backend/internal/util/logger"
-	"postgresus-backend/internal/util/tools"
 
 	"github.com/google/uuid"
 )
@@ -28,31 +27,9 @@ func (s *PostgresMonitoringSettingsService) OnDatabaseCreated(dbID uuid.UUID) {
 	}
 
 	settings := &PostgresMonitoringSettings{
-		DatabaseID:                         dbID,
-		IsSystemResourcesMonitoringEnabled: true,
-		IsDbResourcesMonitoringEnabled:     true,
-		IsQueriesMonitoringEnabled:         true,
-		MonitoringIntervalSeconds:          15,
-	}
-
-	err = s.ensureExtensionsInstalled(
-		dbID,
-		[]tools.PostgresqlExtension{tools.PostgresqlExtensionPgProctab},
-	)
-	if err != nil {
-		settings.IsSystemResourcesMonitoringEnabled = false
-	} else {
-		settings.AddInstalledExtensions([]tools.PostgresqlExtension{tools.PostgresqlExtensionPgProctab})
-	}
-
-	err = s.ensureExtensionsInstalled(
-		dbID,
-		[]tools.PostgresqlExtension{tools.PostgresqlExtensionPgStatMonitor},
-	)
-	if err != nil {
-		settings.IsQueriesMonitoringEnabled = false
-	} else {
-		settings.AddInstalledExtensions([]tools.PostgresqlExtension{tools.PostgresqlExtensionPgStatMonitor})
+		DatabaseID:                     dbID,
+		IsDbResourcesMonitoringEnabled: true,
+		MonitoringIntervalSeconds:      60,
 	}
 
 	err = s.postgresMonitoringSettingsRepository.Save(settings)
@@ -72,47 +49,6 @@ func (s *PostgresMonitoringSettingsService) Save(
 
 	if db.UserID != user.ID {
 		return errors.New("user does not have access to this database")
-	}
-
-	existingSettings, err := s.postgresMonitoringSettingsRepository.GetByDbID(settings.DatabaseID)
-	if err != nil {
-		return err
-	}
-
-	if existingSettings != nil &&
-		settings.IsSystemResourcesMonitoringEnabled &&
-		!existingSettings.IsSystemResourcesMonitoringEnabled {
-		err := s.ensureExtensionsInstalled(
-			settings.DatabaseID,
-			[]tools.PostgresqlExtension{tools.PostgresqlExtensionPgProctab},
-		)
-		if err != nil {
-			return errors.New(
-				"failed to install pg_proctab extension, system resources is not possible (please, disable it)",
-			)
-		}
-
-		settings.AddInstalledExtensions(
-			[]tools.PostgresqlExtension{tools.PostgresqlExtensionPgProctab},
-		)
-	}
-
-	if existingSettings != nil &&
-		settings.IsQueriesMonitoringEnabled &&
-		!existingSettings.IsQueriesMonitoringEnabled {
-		err := s.ensureExtensionsInstalled(
-			settings.DatabaseID,
-			[]tools.PostgresqlExtension{tools.PostgresqlExtensionPgStatMonitor},
-		)
-		if err != nil {
-			return errors.New(
-				"failed to install pg_stat_monitor extension, queries monitoring is not possible (please, disable it)",
-			)
-		}
-
-		settings.AddInstalledExtensions(
-			[]tools.PostgresqlExtension{tools.PostgresqlExtensionPgStatMonitor},
-		)
 	}
 
 	return s.postgresMonitoringSettingsRepository.Save(settings)
@@ -149,31 +85,8 @@ func (s *PostgresMonitoringSettingsService) GetByDbID(
 	return dbSettings, nil
 }
 
-func (s *PostgresMonitoringSettingsService) ensureExtensionsInstalled(
-	dbID uuid.UUID,
-	extensions []tools.PostgresqlExtension,
-) error {
-	database, err := s.databaseService.GetDatabaseByID(dbID)
-	if err != nil {
-		return err
-	}
-
-	if database.Type != databases.DatabaseTypePostgres {
-		return errors.New("database is not a postgres database")
-	}
-
-	if database.Postgresql == nil {
-		return errors.New("database is not a postgres database")
-	}
-
-	if database.Postgresql.Version < tools.PostgresqlVersion16 {
-		return errors.New("system monitoring extensions supported for postgres 16+")
-	}
-
-	err = database.Postgresql.InstallExtensions(extensions)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (s *PostgresMonitoringSettingsService) GetAllDbsWithEnabledDbMonitoring() (
+	[]PostgresMonitoringSettings, error,
+) {
+	return s.postgresMonitoringSettingsRepository.GetAllDbsWithEnabledDbMonitoring()
 }

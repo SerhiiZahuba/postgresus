@@ -350,7 +350,7 @@ export const BackupsComponent = ({ database }: Props) => {
   }
 
   return (
-    <div className="mt-5 w-full rounded bg-white p-5 shadow">
+    <div className="mt-5 w-full rounded-md bg-white p-5 shadow">
       <h2 className="text-xl font-bold">Backups</h2>
 
       <div className="mt-5" />

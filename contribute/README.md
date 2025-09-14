@@ -71,6 +71,12 @@ If you need to add some explanation, do it in appropriate place in the code. Or 
 
 Before taking anything more than a couple of lines of code, please write Rostislav via Telegram (@rostislav_dugin) and confirm priority. It is possible that we already have something in the works, it is not needed or it's not project priority.
 
+Nearsest features:
+- add system metrics (CPU, RAM, disk, IO) (in progress by Rostislav Dugin)
+- add copying of databases
+- add API keys and API actions
+- add UI component of backups lazy loaded
+
 Backups flow:
 
 - do not remove old backups on backups disable
@@ -96,12 +102,11 @@ Extra:
 
 Monitoring flow:
 
-- add system metrics (CPU, RAM, disk, IO) (in progress by Rostislav Dugin)
+
 - add queries stats (slowest, most frequent, etc. via pg_stat_statements)
-- add triggering backups and restores via API
+- add DB size distribution chart (tables, indexes, etc.)
 - add alerting for slow queries (listen for slow query and if they reach >100ms - send message)
 - add alerting for high resource usage (listen for high resource usage and if they reach >90% - send message)
-- add DB size distribution chart (tables, indexes, etc.)
 - add performance test for DB (to compare DBs on different clouds and VPS)
 - add DB metrics (pg_stat_activity, pg_locks, pg_stat_database)
 - add chart of connections (from IPs, apps names, etc.)
