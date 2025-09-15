@@ -7,6 +7,8 @@ import { BackupsComponent } from '../../backups';
 import { HealthckeckAttemptsComponent } from '../../healthcheck';
 import { MetricsComponent } from '../../monitoring/metrics';
 import { DatabaseConfigComponent } from './DatabaseConfigComponent';
+//import { SqlQueryComponent } from '../../query/postgresql/SqlQueryComponent';
+import { SqlQueryComponent } from '../../sqlquery';
 
 interface Props {
   contentHeight: number;
@@ -21,7 +23,7 @@ export const DatabaseComponent = ({
   onDatabaseChanged,
   onDatabaseDeleted,
 }: Props) => {
-  const [currentTab, setCurrentTab] = useState<'config' | 'backups' | 'metrics'>('backups');
+  const [currentTab, setCurrentTab] = useState<'config' | 'backups' | 'metrics' | 'sqlquery' >('backups');
 
   const [database, setDatabase] = useState<Database | undefined>();
   const [editDatabase, setEditDatabase] = useState<Database | undefined>();
@@ -58,11 +60,19 @@ export const DatabaseComponent = ({
         </div>
 
         <div
-          className={`cursor-pointer rounded-tl-md rounded-tr-md px-6 py-2 ${currentTab === 'metrics' ? 'bg-white' : 'bg-gray-200'}`}
+          className={`mr-2 cursor-pointer rounded-tl-md rounded-tr-md px-6 py-2 ${currentTab === 'metrics' ? 'bg-white' : 'bg-gray-200'}`}
           onClick={() => setCurrentTab('metrics')}
         >
           Metrics
         </div>
+
+        < div
+            className={`cursor-pointer rounded-tl-md rounded-tr-md px-6 py-2 ${currentTab === 'sqlquery' ? 'bg-white' : 'bg-gray-200'}`}
+           onClick={() => setCurrentTab('sqlquery')}
+        >
+          SqlQuery
+        </div>
+
       </div>
 
       {currentTab === 'config' && (
@@ -82,6 +92,11 @@ export const DatabaseComponent = ({
         </>
       )}
       {currentTab === 'metrics' && <MetricsComponent databaseId={database.id} />}
+        {currentTab === 'sqlquery' && (
+                <div className="mt-4">
+                      <SqlQueryComponent databaseId={database.id} />
+                    </div>
+              )}
     </div>
   );
 };

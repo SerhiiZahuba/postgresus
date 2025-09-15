@@ -27,6 +27,7 @@ import (
 	"postgresus-backend/internal/features/restores"
 	"postgresus-backend/internal/features/storages"
 	system_healthcheck "postgresus-backend/internal/features/system/healthcheck"
+	sqlquery "postgresus-backend/internal/features/query/postgresql"
 	"postgresus-backend/internal/features/users"
 	env_utils "postgresus-backend/internal/util/env"
 	files_utils "postgresus-backend/internal/util/files"
@@ -178,6 +179,13 @@ func setUpRoutes(r *gin.Engine) {
 	backupConfigController.RegisterRoutes(v1)
 	postgresMonitoringSettingsController.RegisterRoutes(v1)
 	postgresMonitoringMetricsController.RegisterRoutes(v1)
+	//registerSQLQuery(
+	//	v1,
+	//	databases.GetDatabaseService(),
+	//	users.GetUserService(),
+	//)
+	sqlquery.GetPostgresSqlQueryController().RegisterRoutes(v1)
+
 }
 
 func setUpDependencies() {
@@ -313,3 +321,10 @@ func mountFrontend(ginApp *gin.Engine) {
 		c.File(filepath.Join(staticDir, "index.html"))
 	})
 }
+
+//func registerSQLQuery(rg *gin.RouterGroup, dbSvc *databases.DatabaseService, userSvc *users.UserService) {
+//	repo := sqlquery.NewRepository()
+//	svc  := sqlquery.NewService(repo)
+//	ctrl := sqlquery.NewPostgresSqlQueryController(svc, userSvc, dbSvc)
+//	ctrl.RegisterRoutes(rg)
+//}
