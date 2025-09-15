@@ -6,9 +6,9 @@ import { type Database, databaseApi } from '../../../entity/databases';
 import { BackupsComponent } from '../../backups';
 import { HealthckeckAttemptsComponent } from '../../healthcheck';
 import { MetricsComponent } from '../../monitoring/metrics';
-import { DatabaseConfigComponent } from './DatabaseConfigComponent';
 //import { SqlQueryComponent } from '../../query/postgresql/SqlQueryComponent';
 import { SqlQueryComponent } from '../../sqlquery';
+import { DatabaseConfigComponent } from './DatabaseConfigComponent';
 
 interface Props {
   contentHeight: number;
@@ -23,7 +23,9 @@ export const DatabaseComponent = ({
   onDatabaseChanged,
   onDatabaseDeleted,
 }: Props) => {
-  const [currentTab, setCurrentTab] = useState<'config' | 'backups' | 'metrics' | 'sqlquery' >('backups');
+  const [currentTab, setCurrentTab] = useState<'config' | 'backups' | 'metrics' | 'sqlquery'>(
+    'backups',
+  );
 
   const [database, setDatabase] = useState<Database | undefined>();
   const [editDatabase, setEditDatabase] = useState<Database | undefined>();
@@ -66,13 +68,12 @@ export const DatabaseComponent = ({
           Metrics
         </div>
 
-        < div
-            className={`cursor-pointer rounded-tl-md rounded-tr-md px-6 py-2 ${currentTab === 'sqlquery' ? 'bg-white' : 'bg-gray-200'}`}
-           onClick={() => setCurrentTab('sqlquery')}
+        <div
+          className={`cursor-pointer rounded-tl-md rounded-tr-md px-6 py-2 ${currentTab === 'sqlquery' ? 'bg-white' : 'bg-gray-200'}`}
+          onClick={() => setCurrentTab('sqlquery')}
         >
           SqlQuery
         </div>
-
       </div>
 
       {currentTab === 'config' && (
@@ -92,11 +93,11 @@ export const DatabaseComponent = ({
         </>
       )}
       {currentTab === 'metrics' && <MetricsComponent databaseId={database.id} />}
-        {currentTab === 'sqlquery' && (
-                <div className="mt-4">
-                      <SqlQueryComponent databaseId={database.id} />
-                    </div>
-              )}
+      {currentTab === 'sqlquery' && (
+        <div className="mt-4">
+          <SqlQueryComponent databaseId={database.id} />
+        </div>
+      )}
     </div>
   );
 };
