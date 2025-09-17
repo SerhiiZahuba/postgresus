@@ -15,9 +15,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// ==== helpers (аналогічно до інших тестів у репо) ====
 
-// беремо повну модель користувача для доступу до DatabaseService
+
 func getTestUserModel(t *testing.T) *users_models.User {
 	t.Helper()
 
@@ -34,20 +33,19 @@ func getTestUserModel(t *testing.T) *users_models.User {
 	return u
 }
 
-// генеруємо унікальне ім'я тимчасової таблиці (не TEMP, бо різні конекшени)
+
 func tmpTableName() string {
 	return "tmp_sqlquery_" + strings.ReplaceAll(uuid.New().String(), "-", "_")
 }
 
-// виконує один SQL через сервіс
+
 func runSQL(t *testing.T, svc *Service, dbc *databases.Database, sql string) *ExecuteResponse {
 	t.Helper()
 	req := &ExecuteRequest{
-		// DatabaseId тут не використовується сервісом, бо ми передаємо готовий dbc,
-		// але залишимо для повноти
+
 		DatabaseID: dbc.ID,
 		SQL:        sql,
-		// для SELECT сервіс сам підставить maxRows/timeout за замовчуванням
+
 	}
 	resp, err := svc.Execute(dbc, req)
 	assert.NoError(t, err, "execute failed for SQL: %s", sql)
@@ -57,7 +55,7 @@ func runSQL(t *testing.T, svc *Service, dbc *databases.Database, sql string) *Ex
 // ==== tests ====
 
 func Test_Service_Execute_SelectUpdateDelete(t *testing.T) {
-	// arrange: користувач, storage, notifier, database, svc, dbc
+
 	testUser := getTestUserModel(t)
 
 	testUserResp := users.GetTestUser()
@@ -76,7 +74,7 @@ func Test_Service_Execute_SelectUpdateDelete(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, dbc)
 
-	svc := GetSqlQueryService() // через DI (internal/features/sqlquery/di.go)
+	svc := GetSqlQueryService()
 
 	table := tmpTableName()
 
@@ -104,27 +102,27 @@ func Test_Service_Execute_SelectUpdateDelete(t *testing.T) {
 	assert.Equal(t, []string{"id", "name", "cnt"}, sel.Columns)
 	assert.Len(t, sel.Rows, 3)
 
-	// прості перевірки значень (без жорсткого касту типів)
+	// simple check
 	row1 := sel.Rows[0]
 	assert.Equal(t, "1", fmt.Sprint(row1[0]))
 	assert.Equal(t, "a", fmt.Sprint(row1[1]))
 	assert.Equal(t, "10", fmt.Sprint(row1[2]))
 
-	// 4) UPDATE двох рядків
+	// 4) UPDATE two rows
 	updateSQL := fmt.Sprintf(`UPDATE %s SET cnt = cnt + 5 WHERE id IN (1,3)`, table)
 	upd := runSQL(t, svc, dbc, updateSQL)
 	assert.Equal(t, 2, upd.RowCount)
 	assert.Empty(t, upd.Columns)
 	assert.Empty(t, upd.Rows)
 
-	// 5) DELETE одного рядка
+	// 5) DELETE one rows
 	deleteSQL := fmt.Sprintf(`DELETE FROM %s WHERE id = 2`, table)
 	del := runSQL(t, svc, dbc, deleteSQL)
 	assert.Equal(t, 1, del.RowCount)
 	assert.Empty(t, del.Columns)
 	assert.Empty(t, del.Rows)
 
-	// 6) повторний SELECT: лишилось 2 записи, cnt у 1й та 3й збільшився на 5
+	// 6) second SELECT
 	sel2 := runSQL(t, svc, dbc, selectSQL)
 	assert.Equal(t, 2, sel2.RowCount)
 	assert.Equal(t, []string{"id", "name", "cnt"}, sel2.Columns)

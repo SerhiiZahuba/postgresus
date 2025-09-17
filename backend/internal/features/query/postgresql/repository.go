@@ -27,29 +27,24 @@ func (r *Repository) openPool(ctx context.Context, dsn string) (*pgxpool.Pool, e
 	return pgxpool.NewWithConfig(ctx, cfg)
 }
 
-func buildPostgresDSN(pg *postgresql.PostgresqlDatabase) (string, error) {
-	if pg == nil {
+func buildPostgresDSN(p *postgresql.PostgresqlDatabase) (string, error) {
+	if p == nil {
 		return "", fmt.Errorf("postgres config is nil")
 	}
-	if pg.Database == nil {
-		return "", fmt.Errorf("database name is nil")
+
+	dbname := "postgres"
+	if p.Database != nil && strings.TrimSpace(*p.Database) != "" {
+		dbname = strings.TrimSpace(*p.Database)
 	}
 
-	db := *pg.Database
-
-	ssl := "disable"
-	if pg.IsHttps {
-		ssl = "require"
+	sslMode := "disable"
+	if p.IsHttps {
+		sslMode = "require"
 	}
 
 	return fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
-		pg.Host,
-		pg.Port,
-		pg.Username,
-		pg.Password,
-		db,
-		ssl,
+		p.Host, p.Port, p.Username, p.Password, dbname, sslMode,
 	), nil
 }
 
@@ -62,9 +57,7 @@ type Result struct {
 }
 
 // ExecuteSelect — safe SELECT/CTE with forced LIMIT
-// ExecuteSQL — один стейтмент: SELECT/CTE виконуємо з лімітом, інші — через Exec
 func (r *Repository) ExecuteSQL(ctx context.Context, dbc *databases.Database, sql string, maxRows int) (*Result, error) {
-	// підтримуємо лише PostgreSQL (як і раніше)
 	t := strings.ToUpper(string(dbc.Type))
 	if t != "POSTGRES" && t != "POSTGRESQL" {
 		return nil, fmt.Errorf("only PostgreSQL type is supported, got %q", dbc.Type)
@@ -86,7 +79,7 @@ func (r *Repository) ExecuteSQL(ctx context.Context, dbc *databases.Database, sq
 
 	start := time.Now()
 	if isSelect {
-		// SELECT / WITH ... SELECT — обгортаємо лімітом
+
 		stmt = ensureLimit(stmt, maxRows)
 
 		rows, err := pool.Query(ctx, stmt)
@@ -120,37 +113,36 @@ func (r *Repository) ExecuteSQL(ctx context.Context, dbc *databases.Database, sq
 		return &Result{
 			Columns:   cols,
 			Rows:      outRows,
-			RowCount:  rowCount,        // кількість повернутих рядків
+			RowCount:  rowCount,
 			Truncated: rowCount >= maxRows,
 			Duration:  time.Since(start),
 		}, nil
 	}
 
-	// DML/DDL: UPDATE/INSERT/DELETE/CREATE/... — просто виконуємо
+
 	tag, err := pool.Exec(ctx, stmt)
 	if err != nil {
 		return nil, err
 	}
 
-	// фронту достатньо часу виконання; таблиця буде порожня
-	// (за бажанням можна додати RowsAffected в DTO пізніше)
+
 	return &Result{
 		Columns:   []string{},
 		Rows:      [][]any{},
-		RowCount:  int(tag.RowsAffected()), // для інфи: скільки рядків зачеплено
+		RowCount:  int(tag.RowsAffected()),
 		Truncated: false,
 		Duration:  time.Since(start),
 	}, nil
 }
 
-// дуже проста евристика: SELECT або WITH без DML-ключових слів
+
 func isSelectLike(sql string) bool {
 	up := strings.ToUpper(strings.TrimSpace(sql))
 	if strings.HasPrefix(up, "SELECT ") {
 		return true
 	}
 	if strings.HasPrefix(up, "WITH ") {
-		// якщо це WITH ... INSERT/UPDATE/DELETE/... — вважаємо не-SELECT
+		
 		for _, k := range []string{" INSERT ", " UPDATE ", " DELETE ", " CREATE ", " ALTER ", " DROP ", " TRUNCATE ", " GRANT ", " REVOKE "} {
 			if strings.Contains(up, k) {
 				return false

@@ -1,4 +1,3 @@
-// src/entity/api/sqlQueryApi.ts
 import RequestOptions from '../../../shared/api/RequestOptions';
 import { apiHelper } from '../../../shared/api/apiHelper';
 import type { ExecuteResponse } from '../model/ExecuteResponse';
