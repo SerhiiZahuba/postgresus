@@ -1,8 +1,8 @@
 <div align="center">
   <img src="assets/logo.svg" style="margin-bottom: 20px;" alt="Postgresus Logo" width="250"/>
 
-  <h3>PostgreSQL monitoring and backup</h3>
-  <p>Free, open source and self-hosted solution for automated PostgreSQL monitoring and backups. With multiple storage options and notifications</p>
+  <h3>PostgreSQL backup</h3>
+  <p>Free, open source and self-hosted solution for automated PostgreSQL backups. With multiple storage options and notifications</p>
   
   <!-- Badges -->
   [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
