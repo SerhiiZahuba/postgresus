@@ -56,13 +56,6 @@ export const DatabaseComponent = ({
         >
           Backups
         </div>
-
-        <div
-          className={`cursor-pointer rounded-tl-md rounded-tr-md px-6 py-2 ${currentTab === 'metrics' ? 'bg-white' : 'bg-gray-200'}`}
-          onClick={() => setCurrentTab('metrics')}
-        >
-          Metrics
-        </div>
       </div>
 
       {currentTab === 'config' && (

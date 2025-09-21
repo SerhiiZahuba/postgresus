@@ -72,10 +72,8 @@ If you need to add some explanation, do it in appropriate place in the code. Or 
 Before taking anything more than a couple of lines of code, please write Rostislav via Telegram (@rostislav_dugin) and confirm priority. It is possible that we already have something in the works, it is not needed or it's not project priority.
 
 Nearsest features:
-- add system metrics (CPU, RAM, disk, IO) (in progress by Rostislav Dugin)
 - add copying of databases
 - add API keys and API actions
-- add UI component of backups lazy loaded
 
 Backups flow:
 
@@ -102,29 +100,6 @@ Extra:
 
 Monitoring flow:
 
-
 - add queries stats (slowest, most frequent, etc. via pg_stat_statements)
 - add DB size distribution chart (tables, indexes, etc.)
-- add alerting for slow queries (listen for slow query and if they reach >100ms - send message)
-- add alerting for high resource usage (listen for high resource usage and if they reach >90% - send message)
-- add performance test for DB (to compare DBs on different clouds and VPS)
-- add DB metrics (pg_stat_activity, pg_locks, pg_stat_database)
 - add chart of connections (from IPs, apps names, etc.)
-- add chart of transactions (TPS)
-- deadlocks chart
-- chart of connection attempts (to see crash loops)
-- add chart of IDLE transactions VS executing transactions
-- show queries that take the most IO time (suboptimal indexes)
-- show chart by top IO / CPU queries usage (see page 90 of the PostgreSQL monitoring book)
-
-```
-exec_time | IO   | CPU | query
-105 hrs   | 73%  | 27% | SELECT * FROM users;
-```
-
-- chart of read / update / delete / insert queries
-- chart with deadlocks, conflicts, rollbacks (see page 115 of the PostgreSQL monitoring book)
-- stats of buffer usage
-- status of IO (DB, indexes, sequences)
-- % of cache hit
-- replication stats
