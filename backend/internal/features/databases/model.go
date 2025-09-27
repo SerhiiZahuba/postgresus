@@ -35,6 +35,10 @@ func (d *Database) Validate() error {
 
 	switch d.Type {
 	case DatabaseTypePostgres:
+		if d.Postgresql == nil {
+			return errors.New("postgresql database is required")
+		}
+
 		return d.Postgresql.Validate()
 	default:
 		return errors.New("invalid database type: " + string(d.Type))

@@ -14,6 +14,7 @@ var databaseService = &DatabaseService{
 	logger.GetLogger(),
 	[]DatabaseCreationListener{},
 	[]DatabaseRemoveListener{},
+	[]DatabaseCopyListener{},
 }
 
 var databaseController = &DatabaseController{

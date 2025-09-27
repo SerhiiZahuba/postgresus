@@ -3,6 +3,7 @@ package databases
 import (
 	"errors"
 	"log/slog"
+	"postgresus-backend/internal/features/databases/databases/postgresql"
 	"postgresus-backend/internal/features/notifiers"
 	users_models "postgresus-backend/internal/features/users/models"
 	"time"
@@ -17,6 +18,7 @@ type DatabaseService struct {
 
 	dbCreationListener []DatabaseCreationListener
 	dbRemoveListener   []DatabaseRemoveListener
+	dbCopyListener     []DatabaseCopyListener
 }
 
 func (s *DatabaseService) AddDbCreationListener(
@@ -29,6 +31,12 @@ func (s *DatabaseService) AddDbRemoveListener(
 	dbRemoveListener DatabaseRemoveListener,
 ) {
 	s.dbRemoveListener = append(s.dbRemoveListener, dbRemoveListener)
+}
+
+func (s *DatabaseService) AddDbCopyListener(
+	dbCopyListener DatabaseCopyListener,
+) {
+	s.dbCopyListener = append(s.dbCopyListener, dbCopyListener)
 }
 
 func (s *DatabaseService) CreateDatabase(
@@ -218,6 +226,67 @@ func (s *DatabaseService) SetLastBackupTime(databaseID uuid.UUID, backupTime tim
 	}
 
 	return nil
+}
+
+func (s *DatabaseService) CopyDatabase(
+	user *users_models.User,
+	databaseID uuid.UUID,
+) (*Database, error) {
+	existingDatabase, err := s.dbRepository.FindByID(databaseID)
+	if err != nil {
+		return nil, err
+	}
+
+	if existingDatabase.UserID != user.ID {
+		return nil, errors.New("you have not access to this database")
+	}
+
+	newDatabase := &Database{
+		ID:                     uuid.Nil,
+		UserID:                 user.ID,
+		Name:                   existingDatabase.Name + " (Copy)",
+		Type:                   existingDatabase.Type,
+		Notifiers:              existingDatabase.Notifiers,
+		LastBackupTime:         nil,
+		LastBackupErrorMessage: nil,
+		HealthStatus:           existingDatabase.HealthStatus,
+	}
+
+	switch existingDatabase.Type {
+	case DatabaseTypePostgres:
+		if existingDatabase.Postgresql != nil {
+			newDatabase.Postgresql = &postgresql.PostgresqlDatabase{
+				ID:         uuid.Nil,
+				DatabaseID: nil,
+				Version:    existingDatabase.Postgresql.Version,
+				Host:       existingDatabase.Postgresql.Host,
+				Port:       existingDatabase.Postgresql.Port,
+				Username:   existingDatabase.Postgresql.Username,
+				Password:   existingDatabase.Postgresql.Password,
+				Database:   existingDatabase.Postgresql.Database,
+				IsHttps:    existingDatabase.Postgresql.IsHttps,
+			}
+		}
+	}
+
+	if err := newDatabase.Validate(); err != nil {
+		return nil, err
+	}
+
+	copiedDatabase, err := s.dbRepository.Save(newDatabase)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, listener := range s.dbCreationListener {
+		listener.OnDatabaseCreated(copiedDatabase.ID)
+	}
+
+	for _, listener := range s.dbCopyListener {
+		listener.OnDatabaseCopied(databaseID, copiedDatabase.ID)
+	}
+
+	return copiedDatabase, nil
 }
 
 func (s *DatabaseService) SetHealthStatus(

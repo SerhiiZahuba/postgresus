@@ -7,10 +7,6 @@ import { ToastHelper } from '../../../shared/toast';
 import { ConfirmationComponent } from '../../../shared/ui';
 import { EditBackupConfigComponent, ShowBackupConfigComponent } from '../../backups';
 import { EditHealthcheckConfigComponent, ShowHealthcheckConfigComponent } from '../../healthcheck';
-import {
-  EditMonitoringSettingsComponent,
-  ShowMonitoringSettingsComponent,
-} from '../../monitoring/settings';
 import { EditDatabaseNotifiersComponent } from './edit/EditDatabaseNotifiersComponent';
 import { EditDatabaseSpecificDataComponent } from './edit/EditDatabaseSpecificDataComponent';
 import { ShowDatabaseNotifiersComponent } from './show/ShowDatabaseNotifiersComponent';
@@ -39,13 +35,12 @@ export const DatabaseConfigComponent = ({
   const [isEditBackupConfig, setIsEditBackupConfig] = useState(false);
   const [isEditNotifiersSettings, setIsEditNotifiersSettings] = useState(false);
   const [isEditHealthcheckSettings, setIsEditHealthcheckSettings] = useState(false);
-  const [isEditMonitoringSettings, setIsEditMonitoringSettings] = useState(false);
 
   const [isNameUnsaved, setIsNameUnsaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const [isTestingConnection, setIsTestingConnection] = useState(false);
-
+  const [isCopying, setIsCopying] = useState(false);
   const [isShowRemoveConfirm, setIsShowRemoveConfirm] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
 
@@ -53,6 +48,28 @@ export const DatabaseConfigComponent = ({
     setDatabase(undefined);
     setEditDatabase(undefined);
     databaseApi.getDatabase(database.id).then(setDatabase);
+  };
+
+  const copyDatabase = () => {
+    if (!database) return;
+
+    setIsCopying(true);
+
+    databaseApi
+      .copyDatabase(database.id)
+      .then((copiedDatabase) => {
+        ToastHelper.showToast({
+          title: 'Database copied successfully!',
+          description: `"${copiedDatabase.name}" has been created successfully`,
+        });
+        window.location.reload();
+      })
+      .catch((e: Error) => {
+        alert(e.message);
+      })
+      .finally(() => {
+        setIsCopying(false);
+      });
   };
 
   const testConnection = () => {
@@ -97,16 +114,13 @@ export const DatabaseConfigComponent = ({
       });
   };
 
-  const startEdit = (
-    type: 'name' | 'database' | 'backup-config' | 'notifiers' | 'healthcheck' | 'monitoring',
-  ) => {
+  const startEdit = (type: 'name' | 'database' | 'backup-config' | 'notifiers' | 'healthcheck') => {
     setEditDatabase(JSON.parse(JSON.stringify(database)));
     setIsEditName(type === 'name');
     setIsEditDatabaseSpecificDataSettings(type === 'database');
     setIsEditBackupConfig(type === 'backup-config');
     setIsEditNotifiersSettings(type === 'notifiers');
     setIsEditHealthcheckSettings(type === 'healthcheck');
-    setIsEditMonitoringSettings(type === 'monitoring');
     setIsNameUnsaved(false);
   };
 
@@ -344,40 +358,6 @@ export const DatabaseConfigComponent = ({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-10">
-        <div className="w-[400px]">
-          <div className="mt-5 flex items-center font-bold">
-            <div>Monitoring settings</div>
-
-            {!isEditMonitoringSettings ? (
-              <div className="ml-2 h-4 w-4 cursor-pointer" onClick={() => startEdit('monitoring')}>
-                <img src="/icons/pen-gray.svg" />
-              </div>
-            ) : (
-              <div />
-            )}
-          </div>
-
-          <div className="mt-1 text-sm">
-            {isEditMonitoringSettings ? (
-              <EditMonitoringSettingsComponent
-                database={database}
-                onCancel={() => {
-                  setIsEditMonitoringSettings(false);
-                  loadSettings();
-                }}
-                onSaved={() => {
-                  setIsEditMonitoringSettings(false);
-                  loadSettings();
-                }}
-              />
-            ) : (
-              <ShowMonitoringSettingsComponent database={database} />
-            )}
-          </div>
-        </div>
-      </div>
-
       {!isEditDatabaseSpecificDataSettings && (
         <div className="mt-10">
           <Button
@@ -389,6 +369,17 @@ export const DatabaseConfigComponent = ({
             disabled={isTestingConnection}
           >
             Test connection
+          </Button>
+
+          <Button
+            type="primary"
+            className="mr-1"
+            ghost
+            onClick={copyDatabase}
+            loading={isCopying}
+            disabled={isCopying}
+          >
+            Copy
           </Button>
 
           <Button

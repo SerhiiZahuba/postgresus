@@ -44,6 +44,7 @@ func SetupDependencies() {
 		SetDatabaseStorageChangeListener(backupService)
 
 	databases.GetDatabaseService().AddDbRemoveListener(backupService)
+	databases.GetDatabaseService().AddDbCopyListener(backups_config.GetBackupConfigService())
 }
 
 func GetBackupService() *BackupService {

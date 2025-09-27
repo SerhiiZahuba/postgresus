@@ -21,6 +21,7 @@ func (c *DatabaseController) RegisterRoutes(router *gin.RouterGroup) {
 	router.GET("/databases", c.GetDatabases)
 	router.POST("/databases/:id/test-connection", c.TestDatabaseConnection)
 	router.POST("/databases/test-connection-direct", c.TestDatabaseConnectionDirect)
+	router.POST("/databases/:id/copy", c.CopyDatabase)
 	router.GET("/databases/notifier/:id/is-using", c.IsNotifierUsing)
 
 }
@@ -324,4 +325,43 @@ func (c *DatabaseController) IsNotifierUsing(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"isUsing": isUsing})
+}
+
+// CopyDatabase
+// @Summary Copy a database
+// @Description Copy an existing database configuration
+// @Tags databases
+// @Produce json
+// @Param id path string true "Database ID"
+// @Success 201 {object} Database
+// @Failure 400
+// @Failure 401
+// @Failure 500
+// @Router /databases/{id}/copy [post]
+func (c *DatabaseController) CopyDatabase(ctx *gin.Context) {
+	id, err := uuid.Parse(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid database ID"})
+		return
+	}
+
+	authorizationHeader := ctx.GetHeader("Authorization")
+	if authorizationHeader == "" {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "authorization header is required"})
+		return
+	}
+
+	user, err := c.userService.GetUserFromToken(authorizationHeader)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+		return
+	}
+
+	copiedDatabase, err := c.databaseService.CopyDatabase(user, id)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, copiedDatabase)
 }

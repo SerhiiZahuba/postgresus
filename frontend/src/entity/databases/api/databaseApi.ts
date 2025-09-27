@@ -48,6 +48,14 @@ export const databaseApi = {
     );
   },
 
+  async copyDatabase(id: string) {
+    const requestOptions: RequestOptions = new RequestOptions();
+    return apiHelper.fetchPostJson<Database>(
+      `${getApplicationServer()}/api/v1/databases/${id}/copy`,
+      requestOptions,
+    );
+  },
+
   async testDatabaseConnection(id: string) {
     const requestOptions: RequestOptions = new RequestOptions();
     return apiHelper.fetchPostJson(
