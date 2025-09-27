@@ -54,7 +54,7 @@
 
 ### 🐘 **PostgreSQL Support**
 
-- **Multiple versions**: PostgreSQL 13, 14, 15, 16 and 17
+- **Multiple versions**: PostgreSQL 13, 14, 15, 16, 17 and 18
 - **SSL support**: Secure connections available
 - **Easy restoration**: One-click restore from any backup
 
@@ -63,12 +63,6 @@
 - **Docker-based**: Easy deployment and management
 - **Privacy-first**: All your data stays on your infrastructure
 - **Open source**: MIT licensed, inspect every line of code
-
-### 📊 **Monitoring & Insights**
-
-- **Real-time metrics**: Track database health
-- **Historical data**: View trends and patterns over time
-- **Alert system**: Get notified when issues are detected
 
 ### 📦 Installation
 

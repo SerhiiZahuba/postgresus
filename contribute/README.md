@@ -72,7 +72,6 @@ If you need to add some explanation, do it in appropriate place in the code. Or 
 Before taking anything more than a couple of lines of code, please write Rostislav via Telegram (@rostislav_dugin) and confirm priority. It is possible that we already have something in the works, it is not needed or it's not project priority.
 
 Nearsest features:
-- add copying of databases
 - add API keys and API actions
 
 Backups flow:

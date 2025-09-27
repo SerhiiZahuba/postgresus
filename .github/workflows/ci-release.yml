@@ -132,11 +132,12 @@ jobs:
           TEST_POSTGRES_15_PORT=5003
           TEST_POSTGRES_16_PORT=5004
           TEST_POSTGRES_17_PORT=5005
+          TEST_POSTGRES_18_PORT=5006
           # testing S3
           TEST_MINIO_PORT=9000
           TEST_MINIO_CONSOLE_PORT=9001
           # testing NAS
-          TEST_NAS_PORT=5006
+          TEST_NAS_PORT=7006
           EOF
 
       - name: Start test containers

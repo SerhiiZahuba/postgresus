@@ -73,6 +73,7 @@ func Test_BackupAndRestorePostgresql_RestoreIsSuccesful(t *testing.T) {
 		{"PostgreSQL 15", "15", env.TestPostgres15Port},
 		{"PostgreSQL 16", "16", env.TestPostgres16Port},
 		{"PostgreSQL 17", "17", env.TestPostgres17Port},
+		{"PostgreSQL 18", "18", env.TestPostgres18Port},
 	}
 
 	for _, tc := range cases {

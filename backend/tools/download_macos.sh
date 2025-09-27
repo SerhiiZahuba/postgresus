@@ -2,7 +2,7 @@
 
 set -e  # Exit on any error
 
-echo "Installing PostgreSQL client tools versions 13-17 for MacOS..."
+echo "Installing PostgreSQL client tools versions 13-18 for MacOS..."
 echo
 
 # Check if Homebrew is installed
@@ -36,6 +36,7 @@ declare -A PG_URLS=(
     ["15"]="https://ftp.postgresql.org/pub/source/v15.8/postgresql-15.8.tar.gz"
     ["16"]="https://ftp.postgresql.org/pub/source/v16.4/postgresql-16.4.tar.gz"
     ["17"]="https://ftp.postgresql.org/pub/source/v17.0/postgresql-17.0.tar.gz"
+    ["18"]="https://ftp.postgresql.org/pub/source/v18.0/postgresql-18.0.tar.gz"
 )
 
 # Create temporary build directory
@@ -106,7 +107,7 @@ build_postgresql_client() {
 }
 
 # Build each version
-versions="13 14 15 16 17"
+versions="13 14 15 16 17 18"
 
 for version in $versions; do
     url=${PG_URLS[$version]}

@@ -46,6 +46,7 @@ func VerifyPostgresesInstallation(
 		PostgresqlVersion15,
 		PostgresqlVersion16,
 		PostgresqlVersion17,
+		PostgresqlVersion18,
 	}
 
 	requiredCommands := []PostgresqlExecutable{

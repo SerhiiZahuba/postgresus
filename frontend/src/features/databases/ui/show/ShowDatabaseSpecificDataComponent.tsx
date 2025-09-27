@@ -14,6 +14,7 @@ const postgresqlVersionLabels = {
   [PostgresqlVersion.PostgresqlVersion15]: '15',
   [PostgresqlVersion.PostgresqlVersion16]: '16',
   [PostgresqlVersion.PostgresqlVersion17]: '17',
+  [PostgresqlVersion.PostgresqlVersion18]: '18',
 };
 
 export const ShowDatabaseSpecificDataComponent = ({ database }: Props) => {

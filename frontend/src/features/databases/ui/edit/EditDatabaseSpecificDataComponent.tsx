@@ -155,6 +155,7 @@ export const EditDatabaseSpecificDataComponent = ({
                 { label: '15', value: PostgresqlVersion.PostgresqlVersion15 },
                 { label: '16', value: PostgresqlVersion.PostgresqlVersion16 },
                 { label: '17', value: PostgresqlVersion.PostgresqlVersion17 },
+                { label: '18', value: PostgresqlVersion.PostgresqlVersion18 },
               ]}
             />
 

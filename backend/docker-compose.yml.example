@@ -87,6 +87,17 @@ services:
     container_name: test-postgres-17
     shm_size: 1gb
 
+  test-postgres-18:
+    image: postgres:18
+    ports:
+      - "${TEST_POSTGRES_18_PORT}:5432"
+    environment:
+      - POSTGRES_DB=testdb
+      - POSTGRES_USER=testuser
+      - POSTGRES_PASSWORD=testpassword
+    container_name: test-postgres-18
+    shm_size: 1gb
+
   # Test NAS server (Samba)
   test-nas:
     image: dperson/samba:latest

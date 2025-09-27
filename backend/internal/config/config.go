@@ -38,6 +38,7 @@ type EnvVariables struct {
 	TestPostgres15Port string `env:"TEST_POSTGRES_15_PORT"`
 	TestPostgres16Port string `env:"TEST_POSTGRES_16_PORT"`
 	TestPostgres17Port string `env:"TEST_POSTGRES_17_PORT"`
+	TestPostgres18Port string `env:"TEST_POSTGRES_18_PORT"`
 
 	TestMinioPort        string `env:"TEST_MINIO_PORT"`
 	TestMinioConsolePort string `env:"TEST_MINIO_CONSOLE_PORT"`
@@ -152,6 +153,10 @@ func loadEnvVariables() {
 		}
 		if env.TestPostgres17Port == "" {
 			log.Error("TEST_POSTGRES_17_PORT is empty")
+			os.Exit(1)
+		}
+		if env.TestPostgres18Port == "" {
+			log.Error("TEST_POSTGRES_18_PORT is empty")
 			os.Exit(1)
 		}
 

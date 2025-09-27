@@ -20,6 +20,7 @@ const (
 	PostgresqlVersion15 PostgresqlVersion = "15"
 	PostgresqlVersion16 PostgresqlVersion = "16"
 	PostgresqlVersion17 PostgresqlVersion = "17"
+	PostgresqlVersion18 PostgresqlVersion = "18"
 )
 
 type PostgresqlExecutable string
@@ -41,6 +42,8 @@ func GetPostgresqlVersionEnum(version string) PostgresqlVersion {
 		return PostgresqlVersion16
 	case "17":
 		return PostgresqlVersion17
+	case "18":
+		return PostgresqlVersion18
 	default:
 		panic(fmt.Sprintf("invalid postgresql version: %s", version))
 	}
