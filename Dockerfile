@@ -85,8 +85,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   > /etc/apt/sources.list.d/pgdg.list && \
   apt-get update && \
   apt-get install -y --no-install-recommends \
-  postgresql-17 postgresql-client-13 postgresql-client-14 postgresql-client-15 \
-  postgresql-client-16 postgresql-client-17 && \
+  postgresql-17 postgresql-18 postgresql-client-13 postgresql-client-14 postgresql-client-15 \
+  postgresql-client-16 postgresql-client-17 postgresql-client-18 && \
   rm -rf /var/lib/apt/lists/*
 
 # Create postgres user and set up directories
