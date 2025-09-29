@@ -41,7 +41,7 @@ func (i *Interval) Validate() error {
 		return errors.New("day of month is required for monthly intervals")
 	}
 
-	if i.Interval == InternalCron {
+	if i.Interval == IntervalCron {
 		if i.CronExpr == nil || *i.CronExpr == "" {
 			return errors.New("cron expression is required for CRON intervals")
 		}
@@ -75,6 +75,20 @@ func (i *Interval) ShouldTriggerBackup(now time.Time, lastBackupTime *time.Time)
 		return false
 	}
 }
+
+
+func (i *Interval) shouldTriggerDaily(now, lastBackup time.Time) bool {
+	return now.Sub(lastBackup) >= 24*time.Hour
+}
+
+func (i *Interval) shouldTriggerWeekly(now, lastBackup time.Time) bool {
+	return now.Sub(lastBackup) >= 7*24*time.Hour
+}
+
+func (i *Interval) shouldTriggerMonthly(now, lastBackup time.Time) bool {
+	return now.Sub(lastBackup) >= 30*24*time.Hour
+}
+
 
 // CRON trigger
 func (i *Interval) shouldTriggerCron(now, lastBackup time.Time) bool {
