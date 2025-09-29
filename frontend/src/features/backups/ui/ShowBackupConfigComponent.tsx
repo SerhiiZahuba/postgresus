@@ -29,6 +29,7 @@ const intervalLabels = {
   [IntervalType.DAILY]: 'Daily',
   [IntervalType.WEEKLY]: 'Weekly',
   [IntervalType.MONTHLY]: 'Monthly',
+  [IntervalType.CRON]: 'Custom (CRON)',
 };
 
 const periodLabels = {
@@ -109,6 +110,13 @@ export const ShowBackupConfigComponent = ({ database }: Props) => {
             <div>{backupInterval?.interval ? intervalLabels[backupInterval.interval] : ''}</div>
           </div>
 
+          {backupInterval?.interval === IntervalType.CRON && (
+            <div className="mb-1 flex w-full items-center">
+              <div className="min-w-[150px]">CRON expression</div>
+              <div className="font-mono">{backupInterval?.cronExpr || ''}</div>
+            </div>
+          )}
+
           {backupInterval?.interval === IntervalType.WEEKLY && (
             <div className="mb-1 flex w-full items-center">
               <div className="min-w-[150px]">Backup weekday</div>
@@ -127,12 +135,13 @@ export const ShowBackupConfigComponent = ({ database }: Props) => {
             </div>
           )}
 
-          {backupInterval?.interval !== IntervalType.HOURLY && (
-            <div className="mb-1 flex w-full items-center">
-              <div className="min-w-[150px]">Backup time of day</div>
-              <div>{formattedTime}</div>
-            </div>
-          )}
+          {backupInterval?.interval !== IntervalType.HOURLY &&
+            backupInterval?.interval !== IntervalType.CRON && (
+              <div className="mb-1 flex w-full items-center">
+                <div className="min-w-[150px]">Backup time of day</div>
+                <div>{formattedTime}</div>
+              </div>
+            )}
 
           <div className="mb-1 flex w-full items-center">
             <div className="min-w-[150px]">Retry if failed</div>

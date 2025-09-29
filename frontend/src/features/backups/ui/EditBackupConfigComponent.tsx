@@ -2,6 +2,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   Button,
   Checkbox,
+  Input,
   InputNumber,
   Modal,
   Select,
@@ -199,7 +200,8 @@ export const EditBackupConfigComponent = ({
       Boolean(backupInterval?.interval) &&
       (!backupInterval ||
         ((backupInterval.interval !== IntervalType.WEEKLY || displayedWeekday) &&
-          (backupInterval.interval !== IntervalType.MONTHLY || displayedDayOfMonth))));
+          (backupInterval.interval !== IntervalType.MONTHLY || displayedDayOfMonth) &&
+          (backupInterval.interval !== IntervalType.CRON || !!backupInterval.cronExpr))));
 
   return (
     <div>
@@ -233,6 +235,7 @@ export const EditBackupConfigComponent = ({
                 { label: 'Daily', value: IntervalType.DAILY },
                 { label: 'Weekly', value: IntervalType.WEEKLY },
                 { label: 'Monthly', value: IntervalType.MONTHLY },
+                { label: 'Custom (CRON)', value: IntervalType.CRON },
               ]}
             />
           </div>
@@ -296,6 +299,27 @@ export const EditBackupConfigComponent = ({
                   saveInterval(patch);
                 }}
               />
+            </div>
+          )}
+
+          {backupInterval?.interval === IntervalType.CRON && (
+            <div className="mb-1 flex w-full items-center">
+              <div className="min-w-[150px]">CRON expression</div>
+              <Input
+                value={backupInterval?.cronExpr}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  saveInterval({ cronExpr: e.target.value })
+                }
+                size="small"
+                placeholder="e.g. 0 9 * * *"
+                className="max-w-[250px] grow"
+              />
+              <Tooltip
+                className="ml-2 cursor-pointer"
+                title="Standard CRON format. Example: '0 9 * * *' = every day at 09:00"
+              >
+                <InfoCircleOutlined style={{ color: 'gray' }} />
+              </Tooltip>
             </div>
           )}
 

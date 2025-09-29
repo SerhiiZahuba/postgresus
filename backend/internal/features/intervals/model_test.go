@@ -527,3 +527,71 @@ func TestInterval_Validate(t *testing.T) {
 		assert.NoError(t, err)
 	})
 }
+func TestInterval_ShouldTriggerBackup_Cron(t *testing.T) {
+	cronExpr := "0 */2 * * *" // кожні 2 години
+	interval := &Interval{
+		ID:       uuid.New(),
+		Interval: InternalCron,
+		CronExpr: &cronExpr,
+	}
+
+	baseTime := time.Date(2024, 1, 15, 12, 0, 0, 0, time.UTC)
+
+	t.Run("No previous backup: Trigger immediately", func(t *testing.T) {
+		should := interval.ShouldTriggerBackup(baseTime, nil)
+		assert.True(t, should)
+	})
+
+	t.Run("Last backup before last scheduled run: Should trigger", func(t *testing.T) {
+		lastBackup := baseTime.Add(-3 * time.Hour) // останній раз 3 години тому
+		should := interval.ShouldTriggerBackup(baseTime, &lastBackup)
+		assert.True(t, should)
+	})
+
+	t.Run("Last backup just at scheduled time: Do not trigger", func(t *testing.T) {
+		lastBackup := time.Date(2024, 1, 15, 12, 0, 0, 0, time.UTC) // рівно зараз
+		should := interval.ShouldTriggerBackup(baseTime, &lastBackup)
+		assert.False(t, should)
+	})
+
+	t.Run("Last backup after last scheduled run: Do not trigger", func(t *testing.T) {
+		lastBackup := baseTime.Add(-30 * time.Minute)
+		should := interval.ShouldTriggerBackup(baseTime, &lastBackup)
+		assert.False(t, should)
+	})
+}
+
+func TestInterval_Validate_Cron(t *testing.T) {
+	t.Run("Missing cron expression", func(t *testing.T) {
+		interval := &Interval{
+			ID:       uuid.New(),
+			Interval: InternalCron,
+		}
+		err := interval.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "cron expression is required")
+	})
+
+	t.Run("Invalid cron expression", func(t *testing.T) {
+		badExpr := "bad cron"
+		interval := &Interval{
+			ID:       uuid.New(),
+			Interval: InternalCron,
+			CronExpr: &badExpr,
+		}
+		err := interval.Validate()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "invalid cron expression")
+	})
+
+	t.Run("Valid cron expression", func(t *testing.T) {
+		expr := "0 9 * * *" // кожного дня о 9:00
+		interval := &Interval{
+			ID:       uuid.New(),
+			Interval: InternalCron,
+			CronExpr: &expr,
+		}
+		err := interval.Validate()
+		assert.NoError(t, err)
+	})
+}

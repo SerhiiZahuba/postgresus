@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/robfig/cron/v3"
 	"gorm.io/gorm"
 )
 
@@ -17,6 +18,8 @@ type Interval struct {
 	Weekday *int `json:"weekday,omitempty"    gorm:"type:int"`
 	// only for MONTHLY
 	DayOfMonth *int `json:"dayOfMonth,omitempty" gorm:"type:int"`
+	// only for CRON
+	CronExpr *string `json:"cronExpr,omitempty"  gorm:"type:text;"`
 }
 
 func (i *Interval) BeforeSave(tx *gorm.DB) error {
@@ -40,6 +43,17 @@ func (i *Interval) Validate() error {
 		return errors.New("day of month is required for monthly intervals")
 	}
 
+	if i.Interval == InternalCron {
+		if i.CronExpr == nil || *i.CronExpr == "" {
+			return errors.New("cronExpr is required for internal cron intervals")
+		}
+		// validate cron expr
+		_, err := cron.ParseStandard(*i.CronExpr)
+		if err != nil {
+			return errors.New("invalid cron expression" + err.Error())
+		}
+	}
+
 	return nil
 }
 
@@ -59,9 +73,24 @@ func (i *Interval) ShouldTriggerBackup(now time.Time, lastBackupTime *time.Time)
 		return i.shouldTriggerWeekly(now, *lastBackupTime)
 	case IntervalMonthly:
 		return i.shouldTriggerMonthly(now, *lastBackupTime)
+	case InternalCron:
+		return i.shouldTriggerCron(now, *lastBackupTime)
 	default:
 		return false
 	}
+}
+
+//CRON trigger
+func (i *Interval) shouldTriggerCron(now, lastBackup time.Time) bool  {
+	if i.CronExpr == nil {
+		return false
+	}
+	sched, err := cron.ParseStandard(*i.CronExpr)
+	if err != nil {
+		return false
+	}
+	next := sched.Next(lastBackup)
+	return now.After(next) || now.Equal(next)
 }
 
 // daily trigger: honour the TimeOfDay slot and catch up the previous one
