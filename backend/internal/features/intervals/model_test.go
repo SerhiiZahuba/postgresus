@@ -531,7 +531,7 @@ func TestInterval_ShouldTriggerBackup_Cron(t *testing.T) {
 	cronExpr := "0 */2 * * *" // кожні 2 години
 	interval := &Interval{
 		ID:       uuid.New(),
-		Interval: InternalCron,
+		Interval: IntervalCron,
 		CronExpr: &cronExpr,
 	}
 
@@ -565,7 +565,7 @@ func TestInterval_Validate_Cron(t *testing.T) {
 	t.Run("Missing cron expression", func(t *testing.T) {
 		interval := &Interval{
 			ID:       uuid.New(),
-			Interval: InternalCron,
+			Interval: IntervalCron,
 		}
 		err := interval.Validate()
 		assert.Error(t, err)
@@ -576,7 +576,7 @@ func TestInterval_Validate_Cron(t *testing.T) {
 		badExpr := "bad cron"
 		interval := &Interval{
 			ID:       uuid.New(),
-			Interval: InternalCron,
+			Interval: IntervalCron,
 			CronExpr: &badExpr,
 		}
 		err := interval.Validate()
@@ -588,7 +588,7 @@ func TestInterval_Validate_Cron(t *testing.T) {
 		expr := "0 9 * * *" // кожного дня о 9:00
 		interval := &Interval{
 			ID:       uuid.New(),
-			Interval: InternalCron,
+			Interval: IntervalCron,
 			CronExpr: &expr,
 		}
 		err := interval.Validate()
