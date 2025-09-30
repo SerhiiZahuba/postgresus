@@ -26,7 +26,7 @@ require (
 
 require (
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/swaggo/swag v1.16.4 // indirect
+	github.com/swaggo/swag v1.16.4
 )
 
 require (
