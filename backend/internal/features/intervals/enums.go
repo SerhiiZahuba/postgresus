@@ -7,5 +7,5 @@ const (
 	IntervalDaily   IntervalType = "DAILY"
 	IntervalWeekly  IntervalType = "WEEKLY"
 	IntervalMonthly IntervalType = "MONTHLY"
-	InternalCron    IntervalType = "CRON"
+	IntervalCron    IntervalType = "CRON"
 )

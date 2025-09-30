@@ -69,7 +69,7 @@ func (i *Interval) ShouldTriggerBackup(now time.Time, lastBackupTime *time.Time)
 		return i.shouldTriggerWeekly(now, *lastBackupTime)
 	case IntervalMonthly:
 		return i.shouldTriggerMonthly(now, *lastBackupTime)
-	case InternalCron:
+	case IntervalCron:
 		return i.shouldTriggerCron(now, *lastBackupTime)
 	default:
 		return false
