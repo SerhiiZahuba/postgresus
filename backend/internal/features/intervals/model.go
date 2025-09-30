@@ -100,8 +100,8 @@ func (i *Interval) shouldTriggerCron(now, lastBackup time.Time) bool {
 		return false
 	}
 
-	// знайти наступний запуск після lastBackup
+	// find next run after lastBackup
 	next := sched.Next(lastBackup)
-	// якщо ми вже після нього → час робити бекап
+	
 	return now.After(next) || now.Equal(next)
 }
